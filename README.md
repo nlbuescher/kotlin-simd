@@ -1,8 +1,9 @@
-# Kotlin Intrinsics
+# Kotlin SIMD
 
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.nlbuescher/kotlin-intrin.svg?label=Maven%20Central&logo=apachemaven)](https://search.maven.org/search?q=g:%22io.github.nlbuescher%22%20AND%20a:%22kotlin-intrin%22)
+[![Maven Central Version](https://img.shields.io/maven-central/v/dev.buescher/kotlin-simd?logo=apachemaven)](https://central.sonatype.com/search?namespace=dev.buescher&name=kotlin-simd)
+[![Build](https://github.com/nlbuescher/kotlin-simd/actions/workflows/build.yaml/badge.svg)](https://github.com/nlbuescher/kotlin-simd/actions/workflows/build.yaml)
 
-Exposes SSE, SSE2, SSE3, SSSE3, SSE4.1, and SSE4.2 compiler intrincs to Kotlin/Native.
+Exposes SSE, SSE2, SSE3, SSSE3, SSE4.1, and SSE4.2 compiler intrincs to Kotlin/Native as functions.
 
 SSE Support can be checked by using the boolean constants defined by the library (simply called SSE, SSE2, etc). This allows changing implementation at runtime based on hardware SSE support:
 

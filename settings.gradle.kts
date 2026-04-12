@@ -1,1 +1,1 @@
-rootProject.name = "kotlin-intrin"
+rootProject.name = "kotlin-simd"

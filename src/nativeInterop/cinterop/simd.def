@@ -1,0 +1,2 @@
+package = platform.simd
+headers = simd.h

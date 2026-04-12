@@ -1,11 +1,13 @@
-import kotlin.intrin.*
+package dev.buescher.kotlin.simd
+
+import kotlinx.cinterop.*
 import kotlin.math.*
 
 data class Float4(
 	var x: Float,
 	var y: Float,
 	var z: Float,
-	var w: Float
+	var w: Float,
 ) {
 	constructor(v: Vector128) : this(v.getFloatAt(0), v.getFloatAt(1), v.getFloatAt(2), v.getFloatAt(3))
 	constructor(scalar: Float = 0f) : this(scalar, scalar, scalar, scalar)
@@ -24,43 +26,43 @@ data class Float4(
 	operator fun unaryMinus(): Float4 = Float4(-x, -y, -z, -w)
 
 	operator fun plus(scalar: Float): Float4 = Float4(
-		vectorOf(x, y, z, w) + vectorOf(scalar, scalar, scalar, scalar)
+		vectorOf(x, y, z, w) + vectorOf(scalar, scalar, scalar, scalar),
 	)
 
 	operator fun minus(scalar: Float): Float4 = Float4(
-		vectorOf(x, y, z, w) - vectorOf(scalar, scalar, scalar, scalar)
+		vectorOf(x, y, z, w) - vectorOf(scalar, scalar, scalar, scalar),
 	)
 
 	operator fun times(scalar: Float): Float4 = Float4(
-		vectorOf(x, y, z, w) * vectorOf(scalar, scalar, scalar, scalar)
+		vectorOf(x, y, z, w) * vectorOf(scalar, scalar, scalar, scalar),
 	)
 
 	operator fun div(scalar: Float): Float4 = Float4(
-		vectorOf(x, y, z, w) / vectorOf(scalar, scalar, scalar, scalar)
+		vectorOf(x, y, z, w) / vectorOf(scalar, scalar, scalar, scalar),
 	)
 
 	operator fun rem(scalar: Float): Float4 = Float4(
-		vectorOf(x, y, z, w) % vectorOf(scalar, scalar, scalar, scalar)
+		vectorOf(x, y, z, w) % vectorOf(scalar, scalar, scalar, scalar),
 	)
 
 	operator fun plus(other: Float4): Float4 = Float4(
-		vectorOf(x, y, z, w) + vectorOf(other.x, other.y, other.z, other.w)
+		vectorOf(x, y, z, w) + vectorOf(other.x, other.y, other.z, other.w),
 	)
 
 	operator fun minus(other: Float4): Float4 = Float4(
-		vectorOf(x, y, z, w) - vectorOf(other.x, other.y, other.z, other.w)
+		vectorOf(x, y, z, w) - vectorOf(other.x, other.y, other.z, other.w),
 	)
 
 	operator fun times(other: Float4): Float4 = Float4(
-		vectorOf(x, y, z, w) * vectorOf(other.x, other.y, other.z, other.w)
+		vectorOf(x, y, z, w) * vectorOf(other.x, other.y, other.z, other.w),
 	)
 
 	operator fun div(other: Float4): Float4 = Float4(
-		vectorOf(x, y, z, w) / vectorOf(other.x, other.y, other.z, other.w)
+		vectorOf(x, y, z, w) / vectorOf(other.x, other.y, other.z, other.w),
 	)
 
 	operator fun rem(other: Float4): Float4 = Float4(
-		vectorOf(x, y, z, w) % vectorOf(other.x, other.y, other.z, other.w)
+		vectorOf(x, y, z, w) % vectorOf(other.x, other.y, other.z, other.w),
 	)
 
 	operator fun plusAssign(scalar: Float) {
@@ -148,7 +150,7 @@ fun lerp(from: Float4, to: Float4, ratio: Float): Float4 {
 		from.x * (1 - ratio) + to.x * ratio,
 		from.y * (1 - ratio) + to.y * ratio,
 		from.z * (1 - ratio) + to.z * ratio,
-		from.w * (1 - ratio) + to.w * ratio
+		from.w * (1 - ratio) + to.w * ratio,
 	)
 }
 
