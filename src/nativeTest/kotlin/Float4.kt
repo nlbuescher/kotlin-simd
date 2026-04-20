@@ -1,6 +1,7 @@
 package dev.buescher.kotlin.simd
 
 import kotlinx.cinterop.*
+import platform.simd.*
 import kotlin.math.*
 
 data class Float4(
@@ -25,94 +26,68 @@ data class Float4(
 	operator fun unaryPlus(): Float4 = copy()
 	operator fun unaryMinus(): Float4 = Float4(-x, -y, -z, -w)
 
-	operator fun plus(scalar: Float): Float4 = Float4(
-		vectorOf(x, y, z, w) + vectorOf(scalar, scalar, scalar, scalar),
-	)
+	operator fun plus(scalar: Float): Float4 = Float4(x, y, z, w).also { it += scalar }
 
-	operator fun minus(scalar: Float): Float4 = Float4(
-		vectorOf(x, y, z, w) - vectorOf(scalar, scalar, scalar, scalar),
-	)
+	operator fun minus(scalar: Float): Float4 = Float4(x, y, z, w).also { it -= scalar }
 
-	operator fun times(scalar: Float): Float4 = Float4(
-		vectorOf(x, y, z, w) * vectorOf(scalar, scalar, scalar, scalar),
-	)
+	operator fun times(scalar: Float): Float4 = Float4(x, y, z, w).also { it *= scalar }
 
-	operator fun div(scalar: Float): Float4 = Float4(
-		vectorOf(x, y, z, w) / vectorOf(scalar, scalar, scalar, scalar),
-	)
+	operator fun div(scalar: Float): Float4 = Float4(x, y, z, w).also { it /= scalar }
 
-	operator fun rem(scalar: Float): Float4 = Float4(
-		vectorOf(x, y, z, w) % vectorOf(scalar, scalar, scalar, scalar),
-	)
+	operator fun rem(scalar: Float): Float4 = Float4(x, y, z, w).also { it %= scalar }
 
-	operator fun plus(other: Float4): Float4 = Float4(
-		vectorOf(x, y, z, w) + vectorOf(other.x, other.y, other.z, other.w),
-	)
 
-	operator fun minus(other: Float4): Float4 = Float4(
-		vectorOf(x, y, z, w) - vectorOf(other.x, other.y, other.z, other.w),
-	)
+	operator fun plus(other: Float4): Float4 = Float4(x, y, z, w).also { it += other }
 
-	operator fun times(other: Float4): Float4 = Float4(
-		vectorOf(x, y, z, w) * vectorOf(other.x, other.y, other.z, other.w),
-	)
+	operator fun minus(other: Float4): Float4 = Float4(x, y, z, w).also { it -= other }
 
-	operator fun div(other: Float4): Float4 = Float4(
-		vectorOf(x, y, z, w) / vectorOf(other.x, other.y, other.z, other.w),
-	)
+	operator fun times(other: Float4): Float4 = Float4(x, y, z, w).also { it *= other }
 
-	operator fun rem(other: Float4): Float4 = Float4(
-		vectorOf(x, y, z, w) % vectorOf(other.x, other.y, other.z, other.w),
-	)
+	operator fun div(other: Float4): Float4 = Float4(x, y, z, w).also { it /= other }
 
-	operator fun plusAssign(scalar: Float) {
-		val v = vectorOf(x, y, z, w) + vectorOf(scalar, scalar, scalar, scalar)
-		x = v.getFloatAt(0); y = v.getFloatAt(1); z = v.getFloatAt(2); w = v.getFloatAt(3)
-	}
+	operator fun rem(other: Float4): Float4 = Float4(x, y, z, w).also { it %= other }
 
-	operator fun minusAssign(scalar: Float) {
-		val v = vectorOf(x, y, z, w) - vectorOf(scalar, scalar, scalar, scalar)
-		x = v.getFloatAt(0); y = v.getFloatAt(1); z = v.getFloatAt(2); w = v.getFloatAt(3)
-	}
 
-	operator fun timesAssign(scalar: Float) {
-		val v = vectorOf(x, y, z, w) * vectorOf(scalar, scalar, scalar, scalar)
-		x = v.getFloatAt(0); y = v.getFloatAt(1); z = v.getFloatAt(2); w = v.getFloatAt(3)
-	}
+	operator fun plusAssign(scalar: Float) = plusAssign(Float4(scalar))
 
-	operator fun divAssign(scalar: Float) {
-		val v = vectorOf(x, y, z, w) / vectorOf(scalar, scalar, scalar, scalar)
-		x = v.getFloatAt(0); y = v.getFloatAt(1); z = v.getFloatAt(2); w = v.getFloatAt(3)
-	}
+	operator fun minusAssign(scalar: Float) = minusAssign(Float4(scalar))
 
-	operator fun remAssign(scalar: Float) {
-		val v = vectorOf(x, y, z, w) % vectorOf(scalar, scalar, scalar, scalar)
-		x = v.getFloatAt(0); y = v.getFloatAt(1); z = v.getFloatAt(2); w = v.getFloatAt(3)
-	}
+	operator fun timesAssign(scalar: Float) = timesAssign(Float4(scalar))
+
+	operator fun divAssign(scalar: Float) = divAssign(Float4(scalar))
+
+	operator fun remAssign(scalar: Float) = remAssign(Float4(scalar))
 
 
 	operator fun plusAssign(other: Float4) {
-		val v = vectorOf(x, y, z, w) + vectorOf(other.x, other.y, other.z, other.w)
+		val v = sse_add_ps(vectorOf(x, y, z, w), vectorOf(other.x, other.y, other.z, other.w))
 		x = v.getFloatAt(0); y = v.getFloatAt(1); z = v.getFloatAt(2); w = v.getFloatAt(3)
 	}
 
 	operator fun minusAssign(other: Float4) {
-		val v = vectorOf(x, y, z, w) - vectorOf(other.x, other.y, other.z, other.w)
+		val v = sse_sub_ps(vectorOf(x, y, z, w), vectorOf(other.x, other.y, other.z, other.w))
 		x = v.getFloatAt(0); y = v.getFloatAt(1); z = v.getFloatAt(2); w = v.getFloatAt(3)
 	}
 
 	operator fun timesAssign(other: Float4) {
-		val v = vectorOf(x, y, z, w) * vectorOf(other.x, other.y, other.z, other.w)
+		val v = sse_mul_ps(vectorOf(x, y, z, w), vectorOf(other.x, other.y, other.z, other.w))
 		x = v.getFloatAt(0); y = v.getFloatAt(1); z = v.getFloatAt(2); w = v.getFloatAt(3)
 	}
 
 	operator fun divAssign(other: Float4) {
-		val v = vectorOf(x, y, z, w) / vectorOf(other.x, other.y, other.z, other.w)
+		val v = sse_div_ps(vectorOf(x, y, z, w), vectorOf(other.x, other.y, other.z, other.w))
 		x = v.getFloatAt(0); y = v.getFloatAt(1); z = v.getFloatAt(2); w = v.getFloatAt(3)
 	}
 
 	operator fun remAssign(other: Float4) {
-		val v = vectorOf(x, y, z, w) % vectorOf(other.x, other.y, other.z, other.w)
+		val a = vectorOf(x, y, z, w)
+		val b = vectorOf(other.x, other.y, other.z, other.w)
+
+		val div = sse_div_ps(a, b)
+		val trc = sse4_1_round_ps(div, SSE4_1_FROUND_TO_ZERO or SSE4_1_FROUND_NO_EXC)
+		val mul = sse_mul_ps(b, trc)
+		val v = sse_sub_ps(a, mul)
+
 		x = v.getFloatAt(0); y = v.getFloatAt(1); z = v.getFloatAt(2); w = v.getFloatAt(3)
 	}
 
@@ -131,9 +106,13 @@ fun Float4.toFloatArray(): FloatArray = floatArrayOf(x, y, z, w)
 
 fun Float4.toFloat4(): Float4 = copy()
 
-fun round(x: Float4): Float4 = Float4(round(vectorOf(x.x, x.y, x.z, x.w)))
+fun round(x: Float4): Float4 =
+	Float4(sse4_1_round_ps(vectorOf(x.x, x.y, x.z, x.w), SSE4_1_FROUND_TO_NEAREST_INT or SSE4_1_FROUND_NO_EXC))
 
-fun floor(x: Float4): Float4 = Float4(floor(vectorOf(x.x, x.y, x.z, x.w)))
+fun floor(x: Float4): Float4 = Float4(sse4_1_floor_ps(vectorOf(x.x, x.y, x.z, x.w)))
+
+fun truncate(x: Float4): Float4 =
+	Float4(sse4_1_round_ps(vectorOf(x.x, x.y, x.z, x.w), SSE4_1_FROUND_TO_ZERO or SSE4_1_FROUND_NO_EXC))
 
 /** Returns the distance between [from] and [to]. */
 fun distance(from: Float4, to: Float4): Float {

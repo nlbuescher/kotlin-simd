@@ -24,6 +24,7 @@ fun `that abstraction works`() {
 	assertEquals(Float4(1f), Float4(1f) % Float4(2f), "rem")
 	assertEquals(Float4(2f), round(Float4(1.5f)), "round")
 	assertEquals(Float4(1f), floor(Float4(1.5f)), "floor")
+	assertEquals(Float4(-1f), truncate(Float4(-1.5f)), "truncate")
 }
 
 @Test
