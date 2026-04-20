@@ -12,9 +12,10 @@ plugins {
 
 group = "dev.buescher"
 version = providers
-	.exec { commandLine("git", "describe", "--abbrev=0", "--tags") }
+	.exec { commandLine("git", "describe", "--tags", "--abbrev=0") }
 	.standardOutput
 	.asText
+	.map(String::trim)
 	.getOrElse("v0.0.0")
 	.let { previousVersion ->
 		val isExactMatch = providers
@@ -26,13 +27,14 @@ version = providers
 			.map { it.exitValue == 0 }
 			.getOrElse(false)
 
+		val regex = Regex("""^v(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)""")
+		val result = regex.find(previousVersion)
+			?: error("previous version '$previousVersion' does not follow semantic versioning!")
+
 		if (isExactMatch) {
-			previousVersion
+			previousVersion.removePrefix("v")
 		}
 		else {
-			val result = Regex("""^v(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)""")
-				.find(previousVersion)
-				?: error("previous version '$previousVersion' does not follow semantic versioning!")
 			val (major, minor, patch) = result.groupValues.drop(1).map { it.toInt() }
 			"$major.${minor + 1}.0-SNAPSHOT"
 		}
