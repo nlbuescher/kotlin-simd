@@ -248,6 +248,7 @@ jreleaser {
 						kotlinComponents.forEach { component ->
 							artifactOverride {
 								artifactId = component.defaultArtifactId
+								verifyPom = false
 								jar = false
 								sourceJar = true
 								javadocJar = true
@@ -271,6 +272,7 @@ jreleaser {
 						kotlinComponents.forEach { component ->
 							artifactOverride {
 								artifactId = component.defaultArtifactId
+								verifyPom = false
 								jar = false
 								sourceJar = true
 								javadocJar = true
