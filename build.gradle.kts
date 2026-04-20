@@ -1,174 +1,186 @@
-import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.*
-import java.util.*
+import org.jreleaser.model.*
 
 plugins {
-	kotlin("multiplatform") version "1.7.10"
-	id("org.jetbrains.dokka") version "1.7.10"
-	id("maven-publish")
-	id("signing")
+	alias(libs.plugins.kotlin.multiplatform)
+	alias(libs.plugins.dokka)
+	alias(libs.plugins.maven.publish)
+	alias(libs.plugins.jreleaser)
 }
 
-group = "io.github.nlbuescher"
-version = "1.1.0"
+group = "dev.buescher"
+version = providers
+	.exec { commandLine("git", "describe", "--abbrev=0", "--tags") }
+	.standardOutput.asText
+	.getOrElse("v0.0.0")
+	.let { previousVersion ->
+		val isExactMatch = providers
+			.exec {
+				commandLine("git", "describe", "--tags", "--exact-match")
+				isIgnoreExitValue = true
+			}
+			.result.map { it.exitValue == 0 }
+			.getOrElse(false)
+
+		if (isExactMatch) {
+			previousVersion
+		}
+		else {
+			val result = Regex("""^v(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)""")
+				.find(previousVersion)
+				?: error("previous version '$previousVersion' does not follow semantic versioning!")
+			val (major, minor, patch) = result.groupValues.drop(1).map { it.toInt() }
+			"$major.${minor + 1}.0-SNAPSHOT"
+		}
+	}
+	.also { logger.lifecycle("project version: {}", it) }
 
 repositories {
 	mavenCentral()
 }
 
-val host: OperatingSystem = OperatingSystem.current()
-val useSingleTarget: Boolean = System.getProperty("idea.active") == "true"
+val projectDir: Directory = layout.projectDirectory
+val buildDir: Directory = layout.buildDirectory.get()
 
-val intrinNames = listOf("sse", "sse2", "sse3", "ssse3", "sse4.1", "sse4.2")
+val cppSrcDir = projectDir.dir("src/nativeInterop/cinterop/simd")
+val cppBuildDir = buildDir.dir("simd")
 
-//region: C++
+val platformManager: PlatformManager by lazy {
+	val downloader = NativeCompilerDownloader(project)
+		.also { it.downloadIfNeeded() }
 
-val srcDir = projectDir.resolve("src/nativeInterop/cinterop/intrin")
-val outDir = buildDir.resolve("intrin")
-
-val compileTasks = intrinNames.map { name ->
-	tasks.register<Exec>("compile${name.capitalize()}") {
-		group = "build"
-
-		inputs.files(srcDir.listFiles { _, filename -> filename.startsWith(name) })
-		outputs.file(outDir.resolve("$name.o"))
-
-		executable("clang++")
-		args("-std=c++20", "-O3", "-fPIC", "-m$name", "-c", "-o", outDir.resolve("$name.o"), srcDir.resolve("$name.cpp"))
-	}
+	PlatformManager(downloader.compilerDirectory.absolutePath)
 }
 
-val compileIntrin by tasks.registering(Exec::class) {
-	group = "build"
+val simdNames = listOf("sse", "sse2", "sse3", "ssse3", "sse4.1", "sse4.2")
 
-	compileTasks.forEach {
-		dependsOn(it)
-	}
-	inputs.files(srcDir.listFiles { _, name -> name.endsWith(".h") })
-	inputs.file(srcDir.resolve("intrin.cpp"))
-	outputs.file(outDir.resolve("intrin.o"))
+fun registerBuildSimdTaskForTarget(konanTarget: KonanTarget): TaskProvider<Exec> {
+	val targetBuildDir = cppBuildDir.dir(konanTarget.presetName)
+	val presetSuffix = konanTarget.presetName.replaceFirstChar { it.uppercase() }
 
-	executable("clang++")
-	args("-std=c++20", "-O3", "-fPIC", "-c", "-o", outDir.resolve("intrin.o"), srcDir.resolve("intrin.cpp"))
-}
+	val platform = platformManager.platform(konanTarget)
 
-val assembleIntrin by tasks.registering(Exec::class) {
-	group = "build"
+	val compileTasks = simdNames.map { name ->
+		val objectSuffix = name.replaceFirstChar { it.uppercase() }
 
-	dependsOn(compileIntrin)
+		tasks.register<Exec>("compile$objectSuffix$presetSuffix") {
+			group = "build"
 
-	compileTasks.forEach {
-		inputs.files(it.get().outputs.files)
-	}
-	inputs.files(compileIntrin.get().outputs.files)
-	outputs.file(outDir.resolve("libintrin.a"))
+			val sourceFile = cppSrcDir.file("$name.cpp")
+			val objectFile = targetBuildDir.file("$name.o")
 
-	executable("ar")
-	args("-rcs", outDir.resolve("libintrin.a"), outDir.resolve("intrin.o"))
-	args(intrinNames.map { outDir.resolve("$it.o") })
-}
+			inputs.files(cppSrcDir.asFileTree.filter { it.name.startsWith(name) })
+			outputs.file(targetBuildDir.file("$name.o"))
 
-//endregion: C++
-
-//region: KOTLIN
-
-kotlin {
-	if (!useSingleTarget || host.isLinux) linuxX64()
-	if (!useSingleTarget || host.isMacOsX) macosX64()
-	if (!useSingleTarget || host.isWindows) mingwX64()
-
-	targets.withType<KotlinNativeTarget> {
-		// Disable targets that do not match current host
-		if (konanTarget != HostManager.host) {
-			compilations.all {
-				cinterops.all { tasks[interopProcessingTaskName].enabled = false }
-				compileKotlinTask.enabled = false
-			}
-			binaries.all { linkTask.enabled = false }
-		}
-
-		compilations.named("main") {
-			cinterops.create("intrin") {
-				tasks[interopProcessingTaskName].run {
-					dependsOn(assembleIntrin)
-					inputs.files(srcDir.listFiles { _, name -> name.endsWith(".h") })
-					inputs.files(assembleIntrin.get().outputs.files)
-				}
-				includeDirs(srcDir)
-			}
-
-			kotlinOptions.freeCompilerArgs = listOf(
-				"-include-binary", outDir.resolve("libintrin.a").absolutePath
+			commandLine(
+				platform.clang.clangCXX("-std=c++20", "-O3", "-fPIC", "-m$name", "-c", "-o", "$objectFile", "$sourceFile"),
 			)
 		}
 	}
 
-	sourceSets {
-		targets.withType<KotlinNativeTarget> {
-			named("${name}Main") {
-				kotlin.srcDir("src/nativeMain/kotlin")
+	val compileSimd = tasks.register<Exec>("compileSimd$presetSuffix") {
+		group = "build"
+
+		compileTasks.forEach {
+			dependsOn(it)
+		}
+
+		val sourceFile = cppSrcDir.file("simd.cpp")
+		val objectFile = targetBuildDir.file("simd.o")
+
+		inputs.files(cppSrcDir.asFileTree.filter { it.name.endsWith(".h") })
+		inputs.file(sourceFile)
+		outputs.file(objectFile)
+
+		commandLine(platform.clang.clangCXX("-std=c++20", "-O3", "-fPIC", "-c", "-o", "$objectFile", "$sourceFile"))
+	}
+
+	val buildSimd = tasks.register<Exec>("buildSimd$presetSuffix") {
+		group = "build"
+
+		dependsOn(compileSimd)
+
+		val objectFiles = (listOf(targetBuildDir.file("simd.o")) + simdNames.map { targetBuildDir.file("$it.o") })
+			.map { it.toString() }
+			.toTypedArray()
+		val archiveFile = targetBuildDir.file("libsimd.a")
+
+		compileTasks.forEach { inputs.files(it.get().outputs.files) }
+		inputs.files(compileSimd.get().outputs.files)
+		outputs.file(archiveFile)
+
+		commandLine(platform.clang.llvmAr("-rcs", "$archiveFile", *objectFiles))
+	}
+
+	return buildSimd
+}
+
+kotlin {
+	withSourcesJar()
+
+	linuxX64()
+	macosX64()
+	mingwX64()
+
+	targets.withType<KotlinNativeTarget> {
+		compilations.named("main") {
+			cinterops.create("simd") {
+				tasks[interopProcessingTaskName].run {
+					inputs.files(cppSrcDir.asFileTree.filter { it.name.endsWith(".h") })
+				}
+				includeDirs(cppSrcDir)
 			}
-			named("${name}Test") {
-				kotlin.srcDir("src/nativeTest/kotlin")
-				dependencies {
-					implementation(kotlin("test"))
+
+			if (platformManager.isEnabled(konanTarget)) {
+				val buildSimdTask = registerBuildSimdTaskForTarget(konanTarget)
+				compileTaskProvider.configure {
+					dependsOn(buildSimdTask)
 				}
 			}
+		}
+
+		compilerOptions {
+			freeCompilerArgs = listOf("-include-binary", "${cppBuildDir.dir(konanTarget.presetName).file("libsimd.a")}")
+		}
+	}
+
+	sourceSets {
+		all {
+			languageSettings {
+				optIn("kotlinx.cinterop.ExperimentalForeignApi")
+			}
+		}
+		commonMain.dependencies {
+			implementation(kotlin("test"))
 		}
 	}
 }
 
-//endregion: KOTLIN
-
-//region: PUBLISHING
-
-val localProperties = Properties().apply {
-	val file = rootProject.projectDir.resolve("local.properties")
-	if (file.exists()) load(file.inputStream())
-}
-
-val signingKey = localProperties.getProperty("signing.key") ?: System.getenv("SIGNING_KEY") ?: ""
-val signingPassword = localProperties.getProperty("signing.password") ?: System.getenv("SIGNING_PASSWORD") ?: ""
-val ossrhUsername = localProperties.getProperty("ossrh.username") ?: System.getenv("OSSRH_USERNAME") ?: ""
-val ossrhPassword = localProperties.getProperty("ossrh.password") ?: System.getenv("OSSRH_PASSWORD") ?: ""
-
-if (signingKey.isEmpty()) {
-	println("SIGNING KEY IS EMPTY")
-}
-
 val dokkaJar by tasks.registering(Jar::class) {
-	dependsOn(tasks.dokkaHtml)
+	from(tasks.dokkaGeneratePublicationHtml.flatMap { it.outputDirectory })
 	archiveClassifier.set("javadoc")
-	from(tasks.dokkaHtml.get().outputDirectory)
 }
 
-signing {
-	useInMemoryPgpKeys(signingKey, signingPassword)
-	sign(publishing.publications)
-}
+val repositoryUrl = "https://github.com/nlbuescher/kotlin-simd"
+val stagingDir = buildDir.dir("staging-deploy")
 
 publishing {
 	repositories {
 		maven {
-			name = "OSS"
-			url = if ("$version".endsWith("SNAPSHOT"))
-				uri("https://s01.oss.sonatype.org/content/repositories/snapshots")
-			else
-				uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2")
-			credentials {
-				username = ossrhUsername
-				password = ossrhPassword
-			}
+			name = "staging"
+			url = uri(stagingDir)
 		}
 	}
 	publications {
 		withType<MavenPublication> {
 			artifact(dokkaJar)
+
 			pom {
 				name.set(rootProject.name)
-				description.set("CPU Intrinsics for Kotlin/Native")
-				url.set("https://github.com/nlbuescher/kotlin-intrin")
+				description.set("SIMD for Kotlin/Native")
+				url.set(repositoryUrl)
 				licenses {
 					license {
 						name.set("MIT")
@@ -177,16 +189,16 @@ publishing {
 				}
 				issueManagement {
 					system.set("Github")
-					url.set("https://github.com/nlbuescher/kotlin-intrin/issues")
+					url.set("$repositoryUrl/issues")
 				}
 				scm {
-					connection.set("https://github.com/nlbuescher/kotlin-intrin.git")
-					url.set("https://github.com/nlbuescher/kotlin-intrin")
+					connection.set("$repositoryUrl.git")
+					url.set(repositoryUrl)
 				}
 				developers {
 					developer {
-						name.set("Nicola Büscher")
-						email.set("nicolalucasbuescher@gmail.com")
+						name.set("Nico Büscher")
+						email.set("nico@buescher.dev")
 					}
 				}
 			}
@@ -194,20 +206,79 @@ publishing {
 	}
 }
 
-val taskPrefixes = when {
-	host.isLinux -> listOf("publishLinux", "publishKotlinMultiplatform")
-	host.isMacOsX -> listOf("publishMacos")
-	host.isWindows -> listOf("publishMingw")
-	else -> error("unknown host '${host.name}'!")
-}
-
-val publishTasks = tasks.withType<PublishToMavenRepository>().filter { task ->
-	taskPrefixes.any { task.name.startsWith(it) }
-}
+val publishTasks = HostManager.host
+	.let {
+		when (it.family) {
+			Family.LINUX -> listOf("LinuxX64")
+			Family.OSX -> listOf("MacosX64", "KotlinMultiplatform")
+			Family.MINGW -> listOf("MingwX64")
+			else -> error("Unknown host family '${it.family}'")
+		}
+	}
+	.map { tasks.named("publish${it}PublicationToStagingRepository") }
 
 tasks.register("smartPublish") {
 	group = "publishing"
-	dependsOn(publishTasks)
+
+	publishTasks.forEach {
+		dependsOn(it)
+	}
 }
 
-//endregion: PUBLISHING
+jreleaser {
+	signing {
+		pgp {
+			active = Active.ALWAYS
+			armored = true
+		}
+	}
+	deploy {
+		maven {
+			mavenCentral {
+				create("central") {
+					active = Active.RELEASE
+					url = "https://central.sonatype.com/api/v1/publisher"
+					stagingRepository(stagingDir)
+
+					kotlin.targets.withType<KotlinNativeTarget> {
+						if (platformManager.isEnabled(konanTarget)) {
+							val publication = publishing.publications.getByName<MavenPublication>(name)
+
+							artifactOverride {
+								artifactId = publication.artifactId
+								jar = false
+								sourceJar = true
+								javadocJar = true
+							}
+						}
+					}
+				}
+			}
+			nexus2 {
+				create("snapshots") {
+					active = Active.SNAPSHOT
+					snapshotUrl = "https://central.sonatype.com/repository/maven-snapshots/"
+					verifyPom = false
+					applyMavenCentralRules = true
+					snapshotSupported = true
+					closeRepository = true
+					releaseRepository = true
+					stagingRepository(stagingDir)
+
+					kotlin.targets.withType<KotlinNativeTarget> {
+						if (platformManager.isEnabled(konanTarget)) {
+							val publication = publishing.publications.getByName<MavenPublication>(name)
+
+							artifactOverride {
+								artifactId = publication.artifactId
+								jar = false
+								sourceJar = true
+								javadocJar = true
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

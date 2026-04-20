@@ -1,6 +1,7 @@
-package kotlin.intrin
+package dev.buescher.kotlin.simd
 
-import platform.intrin.*
+import kotlinx.cinterop.*
+import platform.simd.*
 import kotlin.math.*
 
 operator fun Vector128.plus(other: Vector128): Vector128 = when {
@@ -58,6 +59,7 @@ operator fun Vector128.rem(other: Vector128): Vector128 = when {
 		val mul0 = sse_mul_ps(other, flr0)
 		sse_sub_ps(this, mul0)
 	}
+
 	else -> {
 		vectorOf(
 			getFloatAt(0) % other.getFloatAt(0),
