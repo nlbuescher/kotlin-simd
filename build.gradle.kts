@@ -13,7 +13,8 @@ plugins {
 group = "dev.buescher"
 version = providers
 	.exec { commandLine("git", "describe", "--abbrev=0", "--tags") }
-	.standardOutput.asText
+	.standardOutput
+	.asText
 	.getOrElse("v0.0.0")
 	.let { previousVersion ->
 		val isExactMatch = providers
@@ -21,7 +22,8 @@ version = providers
 				commandLine("git", "describe", "--tags", "--exact-match")
 				isIgnoreExitValue = true
 			}
-			.result.map { it.exitValue == 0 }
+			.result
+			.map { it.exitValue == 0 }
 			.getOrElse(false)
 
 		if (isExactMatch) {
@@ -241,11 +243,9 @@ jreleaser {
 					stagingRepository(stagingDir)
 
 					kotlin.targets.withType<KotlinNativeTarget> {
-						if (platformManager.isEnabled(konanTarget)) {
-							val publication = publishing.publications.getByName<MavenPublication>(name)
-
+						kotlinComponents.forEach { component ->
 							artifactOverride {
-								artifactId = publication.artifactId
+								artifactId = component.defaultArtifactId
 								jar = false
 								sourceJar = true
 								javadocJar = true
@@ -266,11 +266,9 @@ jreleaser {
 					stagingRepository(stagingDir)
 
 					kotlin.targets.withType<KotlinNativeTarget> {
-						if (platformManager.isEnabled(konanTarget)) {
-							val publication = publishing.publications.getByName<MavenPublication>(name)
-
+						kotlinComponents.forEach { component ->
 							artifactOverride {
-								artifactId = publication.artifactId
+								artifactId = component.defaultArtifactId
 								jar = false
 								sourceJar = true
 								javadocJar = true
