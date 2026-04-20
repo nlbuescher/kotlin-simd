@@ -2,7 +2,6 @@
 #define SSE3_H
 
 #include <stdbool.h>
-#include <stdint.h>
 
 extern const bool SSE3;
 

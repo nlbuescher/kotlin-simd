@@ -1,6 +1,6 @@
-#include <emmintrin.h>
-
 #include "sse2.h"
+
+#include <emmintrin.h>
 
 __m128i sse2_add_epi16(__m128i a, __m128i b) { return _mm_add_epi16(a, b); }
 __m128i sse2_add_epi32(__m128i a, __m128i b) { return _mm_add_epi32(a, b); }
@@ -19,18 +19,18 @@ __m128i sse2_andnot_si128(__m128i a, __m128i b) { return _mm_andnot_si128(a, b);
 __m128i sse2_avg_epu16(__m128i a, __m128i b) { return _mm_avg_epu16(a, b); }
 __m128i sse2_avg_epu8(__m128i a, __m128i b) { return _mm_avg_epu8(a, b); }
 namespace bslli_si128 {
-	typedef __m128i(*function)(__m128i);
-	const function map[17] = {
-		[](__m128i a) { return _mm_bslli_si128(a,  0); },
-		[](__m128i a) { return _mm_bslli_si128(a,  1); },
-		[](__m128i a) { return _mm_bslli_si128(a,  2); },
-		[](__m128i a) { return _mm_bslli_si128(a,  3); },
-		[](__m128i a) { return _mm_bslli_si128(a,  4); },
-		[](__m128i a) { return _mm_bslli_si128(a,  5); },
-		[](__m128i a) { return _mm_bslli_si128(a,  6); },
-		[](__m128i a) { return _mm_bslli_si128(a,  7); },
-		[](__m128i a) { return _mm_bslli_si128(a,  8); },
-		[](__m128i a) { return _mm_bslli_si128(a,  9); },
+	typedef __m128i (*function)(__m128i);
+	const function map[17]{
+		[](__m128i a) { return _mm_bslli_si128(a, 0); },
+		[](__m128i a) { return _mm_bslli_si128(a, 1); },
+		[](__m128i a) { return _mm_bslli_si128(a, 2); },
+		[](__m128i a) { return _mm_bslli_si128(a, 3); },
+		[](__m128i a) { return _mm_bslli_si128(a, 4); },
+		[](__m128i a) { return _mm_bslli_si128(a, 5); },
+		[](__m128i a) { return _mm_bslli_si128(a, 6); },
+		[](__m128i a) { return _mm_bslli_si128(a, 7); },
+		[](__m128i a) { return _mm_bslli_si128(a, 8); },
+		[](__m128i a) { return _mm_bslli_si128(a, 9); },
 		[](__m128i a) { return _mm_bslli_si128(a, 10); },
 		[](__m128i a) { return _mm_bslli_si128(a, 11); },
 		[](__m128i a) { return _mm_bslli_si128(a, 12); },
@@ -40,20 +40,23 @@ namespace bslli_si128 {
 		[](__m128i a) { return _mm_bslli_si128(a, 16); },
 	};
 } // namespace bslli_si128
-__m128i sse2_bslli_si128(__m128i a, uint8_t imm8) { if (imm8 > 16) imm8 = 16; return bslli_si128::map[imm8](a); }
+__m128i sse2_bslli_si128(__m128i a, uint8_t imm8) {
+	if (imm8 > 16) imm8 = 16;
+	return bslli_si128::map[imm8](a);
+}
 namespace bsrli_si128 {
-	typedef __m128i(*function)(__m128i);
-	const function map[17] = {
-		[](__m128i a) { return _mm_bsrli_si128(a,  0); },
-		[](__m128i a) { return _mm_bsrli_si128(a,  1); },
-		[](__m128i a) { return _mm_bsrli_si128(a,  2); },
-		[](__m128i a) { return _mm_bsrli_si128(a,  3); },
-		[](__m128i a) { return _mm_bsrli_si128(a,  4); },
-		[](__m128i a) { return _mm_bsrli_si128(a,  5); },
-		[](__m128i a) { return _mm_bsrli_si128(a,  6); },
-		[](__m128i a) { return _mm_bsrli_si128(a,  7); },
-		[](__m128i a) { return _mm_bsrli_si128(a,  8); },
-		[](__m128i a) { return _mm_bsrli_si128(a,  9); },
+	typedef __m128i (*function)(__m128i);
+	const function map[17]{
+		[](__m128i a) { return _mm_bsrli_si128(a, 0); },
+		[](__m128i a) { return _mm_bsrli_si128(a, 1); },
+		[](__m128i a) { return _mm_bsrli_si128(a, 2); },
+		[](__m128i a) { return _mm_bsrli_si128(a, 3); },
+		[](__m128i a) { return _mm_bsrli_si128(a, 4); },
+		[](__m128i a) { return _mm_bsrli_si128(a, 5); },
+		[](__m128i a) { return _mm_bsrli_si128(a, 6); },
+		[](__m128i a) { return _mm_bsrli_si128(a, 7); },
+		[](__m128i a) { return _mm_bsrli_si128(a, 8); },
+		[](__m128i a) { return _mm_bsrli_si128(a, 9); },
 		[](__m128i a) { return _mm_bsrli_si128(a, 10); },
 		[](__m128i a) { return _mm_bsrli_si128(a, 11); },
 		[](__m128i a) { return _mm_bsrli_si128(a, 12); },
@@ -63,7 +66,10 @@ namespace bsrli_si128 {
 		[](__m128i a) { return _mm_bsrli_si128(a, 16); },
 	};
 } // namespace bsrli_si128
-__m128i sse2_bsrli_si128(__m128i a, uint8_t imm8) { if (imm8 > 16) imm8 = 16; return bsrli_si128::map[imm8](a); }
+__m128i sse2_bsrli_si128(__m128i a, uint8_t imm8) {
+	if (imm8 > 16) imm8 = 16;
+	return bsrli_si128::map[imm8](a);
+}
 __m128 sse2_castpd_ps(__m128d a) { return _mm_castpd_ps(a); }
 __m128i sse2_castpd_si128(__m128d a) { return _mm_castpd_si128(a); }
 __m128d sse2_castps_pd(__m128 a) { return _mm_castps_pd(a); }
@@ -134,22 +140,22 @@ int64_t sse2_cvttsd_si64(__m128d a) { return _mm_cvttsd_si64(a); }
 __m128d sse2_div_pd(__m128d a, __m128d b) { return _mm_div_pd(a, b); }
 __m128d sse2_div_sd(__m128d a, __m128d b) { return _mm_div_sd(a, b); }
 namespace extract_epi16 {
-	typedef int16_t(*function)(__m128i);
-	const function map[8] {
-		[](__m128i a) { return (int16_t)_mm_extract_epi16(a, 0); },
-		[](__m128i a) { return (int16_t)_mm_extract_epi16(a, 1); },
-		[](__m128i a) { return (int16_t)_mm_extract_epi16(a, 2); },
-		[](__m128i a) { return (int16_t)_mm_extract_epi16(a, 3); },
-		[](__m128i a) { return (int16_t)_mm_extract_epi16(a, 4); },
-		[](__m128i a) { return (int16_t)_mm_extract_epi16(a, 5); },
-		[](__m128i a) { return (int16_t)_mm_extract_epi16(a, 6); },
-		[](__m128i a) { return (int16_t)_mm_extract_epi16(a, 7); },
+	typedef int16_t (*function)(__m128i);
+	const function map[8]{
+		[](__m128i a) { return (int16_t) _mm_extract_epi16(a, 0); },
+		[](__m128i a) { return (int16_t) _mm_extract_epi16(a, 1); },
+		[](__m128i a) { return (int16_t) _mm_extract_epi16(a, 2); },
+		[](__m128i a) { return (int16_t) _mm_extract_epi16(a, 3); },
+		[](__m128i a) { return (int16_t) _mm_extract_epi16(a, 4); },
+		[](__m128i a) { return (int16_t) _mm_extract_epi16(a, 5); },
+		[](__m128i a) { return (int16_t) _mm_extract_epi16(a, 6); },
+		[](__m128i a) { return (int16_t) _mm_extract_epi16(a, 7); },
 	};
 } // namespace extract_epi16
 int16_t sse2_extract_epi16(__m128i a, uint8_t imm8) { return extract_epi16::map[imm8 & 0x7](a); }
 namespace insert_epi16 {
-	typedef __m128i(*function)(__m128i, int16_t);
-	const function map[8] {
+	typedef __m128i (*function)(__m128i, int16_t);
+	const function map[8]{
 		[](__m128i a, int16_t i) { return _mm_insert_epi16(a, i, 0); },
 		[](__m128i a, int16_t i) { return _mm_insert_epi16(a, i, 1); },
 		[](__m128i a, int16_t i) { return _mm_insert_epi16(a, i, 2); },
@@ -161,7 +167,7 @@ namespace insert_epi16 {
 	};
 } // namespace insert_epi16
 __m128i sse2_insert_epi16(__m128i a, int16_t i, uint8_t imm8) { return insert_epi16::map[imm8 & 0x7](a, i); }
-void sse2_lfence(void) { _mm_lfence(); }
+void sse2_lfence() { _mm_lfence(); }
 __m128d sse2_load_pd(const double* mem_addr) { return _mm_load_pd(mem_addr); }
 __m128d sse2_load_pd1(const double* mem_addr) { return _mm_load_pd1(mem_addr); }
 __m128d sse2_load_sd(const double* mem_addr) { return _mm_load_sd(mem_addr); }
@@ -174,12 +180,12 @@ __m128d sse2_loadr_pd(const double* mem_addr) { return _mm_loadr_pd(mem_addr); }
 __m128d sse2_loadu_pd(const double* mem_addr) { return _mm_loadu_pd(mem_addr); }
 __m128i sse2_loadu_si128(const __m128i* mem_addr) { return _mm_loadu_si128(mem_addr); }
 __m128i sse2_madd_epi16(__m128i a, __m128i b) { return _mm_madd_epi16(a, b); }
-void sse2_maskmoveu_si128(__m128i a, __m128i mask, int8_t* mem_addr) { _mm_maskmoveu_si128(a, mask, (char*)mem_addr); }
+void sse2_maskmoveu_si128(__m128i a, __m128i mask, int8_t* mem_addr) { _mm_maskmoveu_si128(a, mask, (char*) mem_addr); }
 __m128i sse2_max_epi16(__m128i a, __m128i b) { return _mm_max_epi16(a, b); }
 __m128i sse2_max_epu8(__m128i a, __m128i b) { return _mm_max_epu8(a, b); }
 __m128d sse2_max_pd(__m128d a, __m128d b) { return _mm_max_pd(a, b); }
 __m128d sse2_max_sd(__m128d a, __m128d b) { return _mm_max_sd(a, b); }
-void sse2_mfence(void) { _mm_mfence(); }
+void sse2_mfence() { _mm_mfence(); }
 __m128i sse2_min_epi16(__m128i a, __m128i b) { return _mm_min_epi16(a, b); }
 __m128i sse2_min_epu8(__m128i a, __m128i b) { return _mm_min_epu8(a, b); }
 __m128d sse2_min_pd(__m128d a, __m128d b) { return _mm_min_pd(a, b); }
@@ -199,12 +205,17 @@ __m128i sse2_or_si128(__m128i a, __m128i b) { return _mm_or_si128(a, b); }
 __m128i sse2_packs_epi16(__m128i a, __m128i b) { return _mm_packs_epi16(a, b); }
 __m128i sse2_packs_epi32(__m128i a, __m128i b) { return _mm_packs_epi32(a, b); }
 __m128i sse2_packus_epi16(__m128i a, __m128i b) { return _mm_packus_epi16(a, b); }
-void sse2_pause(void) { _mm_pause(); }
+void sse2_pause() { _mm_pause(); }
 __m128i sse2_sad_epu8(__m128i a, __m128i b) { return _mm_sad_epu8(a, b); }
-__m128i sse2_set_epi16(int16_t e7, int16_t e6, int16_t e5, int16_t e4, int16_t e3, int16_t e2, int16_t e1, int16_t e0) { return _mm_set_epi16(e7, e6, e5, e4, e3, e2, e1, e0); }
+__m128i sse2_set_epi16(int16_t e7, int16_t e6, int16_t e5, int16_t e4, int16_t e3, int16_t e2, int16_t e1, int16_t e0) {
+	return _mm_set_epi16(e7, e6, e5, e4, e3, e2, e1, e0);
+}
 __m128i sse2_set_epi32(int32_t e3, int32_t e2, int32_t e1, int32_t e0) { return _mm_set_epi32(e3, e2, e1, e0); }
 __m128i sse2_set_epi64(int64_t e1, int64_t e0) { return _mm_set_epi64x(e1, e0); }
-__m128i sse2_set_epi8(int8_t e15, int8_t e14, int8_t e13, int8_t e12, int8_t e11, int8_t e10, int8_t e9, int8_t e8, int8_t e7, int8_t e6, int8_t e5, int8_t e4, int8_t e3, int8_t e2, int8_t e1, int8_t e0) { return _mm_set_epi8(e15, e14, e13, e12, e11, e10, e9, e8, e7, e6, e5, e4, e3, e2, e1, e0); }
+__m128i sse2_set_epi8(
+	int8_t e15, int8_t e14, int8_t e13, int8_t e12, int8_t e11, int8_t e10, int8_t e9, int8_t e8,
+	int8_t e7, int8_t e6, int8_t e5, int8_t e4, int8_t e3, int8_t e2, int8_t e1, int8_t e0
+) { return _mm_set_epi8(e15, e14, e13, e12, e11, e10, e9, e8, e7, e6, e5, e4, e3, e2, e1, e0); }
 __m128d sse2_set_pd(double e1, double e0) { return _mm_set_pd(e1, e0); }
 __m128d sse2_set_pd1(double a) { return _mm_set_pd1(a); }
 __m128d sse2_set_sd(double a) { return _mm_set_sd(a); }
@@ -213,15 +224,20 @@ __m128i sse2_set1_epi32(int32_t a) { return _mm_set1_epi32(a); }
 __m128i sse2_set1_epi64(int64_t a) { return _mm_set1_epi64x(a); }
 __m128i sse2_set1_epi8(int8_t a) { return _mm_set1_epi8(a); }
 __m128d sse2_set1_pd(double a) { return _mm_set1_pd(a); }
-__m128i sse2_setr_epi16(int16_t e7, int16_t e6, int16_t e5, int16_t e4, int16_t e3, int16_t e2, int16_t e1, int16_t e0) { return _mm_setr_epi16(e7, e6, e5, e4, e3, e2, e1, e0); }
+__m128i sse2_setr_epi16(
+	int16_t e7, int16_t e6, int16_t e5, int16_t e4, int16_t e3, int16_t e2, int16_t e1, int16_t e0
+) { return _mm_setr_epi16(e7, e6, e5, e4, e3, e2, e1, e0); }
 __m128i sse2_setr_epi32(int32_t e3, int32_t e2, int32_t e1, int32_t e0) { return _mm_setr_epi32(e3, e2, e1, e0); }
-__m128i sse2_setr_epi8(int8_t e15, int8_t e14, int8_t e13, int8_t e12, int8_t e11, int8_t e10, int8_t e9, int8_t e8, int8_t e7, int8_t e6, int8_t e5, int8_t e4, int8_t e3, int8_t e2, int8_t e1, int8_t e0) { return _mm_setr_epi8(e15, e14, e13, e12, e11, e10, e9, e8, e7, e6, e5, e4, e3, e2, e1, e0); }
+__m128i sse2_setr_epi8(
+	int8_t e15, int8_t e14, int8_t e13, int8_t e12, int8_t e11, int8_t e10, int8_t e9, int8_t e8,
+	int8_t e7, int8_t e6, int8_t e5, int8_t e4, int8_t e3, int8_t e2, int8_t e1, int8_t e0
+) { return _mm_setr_epi8(e15, e14, e13, e12, e11, e10, e9, e8, e7, e6, e5, e4, e3, e2, e1, e0); }
 __m128d sse2_setr_pd(double e1, double e0) { return _mm_setr_pd(e1, e0); }
-__m128d sse2_setzero_pd(void) { return _mm_setzero_pd(); }
+__m128d sse2_setzero_pd() { return _mm_setzero_pd(); }
 __m128i sse2_setzero_si128() { return _mm_setzero_si128(); }
 namespace shuffle_epi32 {
-	typedef __m128i(*function)(__m128i);
-	const function map[4] {
+	typedef __m128i (*function)(__m128i);
+	const function map[4]{
 		[](__m128i a) { return _mm_shuffle_epi32(a, 0); },
 		[](__m128i a) { return _mm_shuffle_epi32(a, 1); },
 		[](__m128i a) { return _mm_shuffle_epi32(a, 2); },
@@ -230,8 +246,8 @@ namespace shuffle_epi32 {
 } // namespace shuffle_epi32
 __m128i sse2_shuffle_epi32(__m128i a, uint8_t imm8) { return shuffle_epi32::map[imm8 & 0x3](a); }
 namespace shuffle_pd {
-	typedef __m128d(*function)(__m128d, __m128d);
-	const function map[4] {
+	typedef __m128d (*function)(__m128d, __m128d);
+	const function map[4]{
 		[](__m128d a, __m128d b) { return _mm_shuffle_pd(a, b, 0); },
 		[](__m128d a, __m128d b) { return _mm_shuffle_pd(a, b, 1); },
 		[](__m128d a, __m128d b) { return _mm_shuffle_pd(a, b, 2); },
@@ -240,8 +256,8 @@ namespace shuffle_pd {
 } // namespace shuffle_pd
 __m128d sse2_shuffle_pd(__m128d a, __m128d b, uint8_t imm8) { return shuffle_pd::map[imm8 & 0x3](a, b); }
 namespace shufflehi_epi16 {
-	typedef __m128i(*function)(__m128i);
-	const function map[256] {
+	typedef __m128i (*function)(__m128i);
+	const function map[256]{
 		[](__m128i a) { return _mm_shufflehi_epi16(a, 0x00); },
 		[](__m128i a) { return _mm_shufflehi_epi16(a, 0x01); },
 		[](__m128i a) { return _mm_shufflehi_epi16(a, 0x02); },
@@ -502,8 +518,8 @@ namespace shufflehi_epi16 {
 } // namespace shufflehi_epi16
 __m128i sse2_shufflehi_epi16(__m128i a, uint8_t imm8) { return shufflehi_epi16::map[imm8](a); }
 namespace shufflelo_epi16 {
-	typedef __m128i(*function)(__m128i);
-	const function map[256] {
+	typedef __m128i (*function)(__m128i);
+	const function map[256]{
 		[](__m128i a) { return _mm_shufflelo_epi16(a, 0x00); },
 		[](__m128i a) { return _mm_shufflelo_epi16(a, 0x01); },
 		[](__m128i a) { return _mm_shufflelo_epi16(a, 0x02); },
@@ -770,18 +786,18 @@ __m128i sse2_slli_epi16(__m128i a, uint8_t imm8) { return _mm_slli_epi16(a, imm8
 __m128i sse2_slli_epi32(__m128i a, uint8_t imm8) { return _mm_slli_epi32(a, imm8); }
 __m128i sse2_slli_epi64(__m128i a, uint8_t imm8) { return _mm_slli_epi64(a, imm8); }
 namespace slli_si128 {
-	typedef __m128i(*function)(__m128i);
-	const function map[17] {
-		[](__m128i a) { return _mm_slli_si128(a,  0); },
-		[](__m128i a) { return _mm_slli_si128(a,  1); },
-		[](__m128i a) { return _mm_slli_si128(a,  2); },
-		[](__m128i a) { return _mm_slli_si128(a,  3); },
-		[](__m128i a) { return _mm_slli_si128(a,  4); },
-		[](__m128i a) { return _mm_slli_si128(a,  5); },
-		[](__m128i a) { return _mm_slli_si128(a,  6); },
-		[](__m128i a) { return _mm_slli_si128(a,  7); },
-		[](__m128i a) { return _mm_slli_si128(a,  8); },
-		[](__m128i a) { return _mm_slli_si128(a,  9); },
+	typedef __m128i (*function)(__m128i);
+	const function map[17]{
+		[](__m128i a) { return _mm_slli_si128(a, 0); },
+		[](__m128i a) { return _mm_slli_si128(a, 1); },
+		[](__m128i a) { return _mm_slli_si128(a, 2); },
+		[](__m128i a) { return _mm_slli_si128(a, 3); },
+		[](__m128i a) { return _mm_slli_si128(a, 4); },
+		[](__m128i a) { return _mm_slli_si128(a, 5); },
+		[](__m128i a) { return _mm_slli_si128(a, 6); },
+		[](__m128i a) { return _mm_slli_si128(a, 7); },
+		[](__m128i a) { return _mm_slli_si128(a, 8); },
+		[](__m128i a) { return _mm_slli_si128(a, 9); },
 		[](__m128i a) { return _mm_slli_si128(a, 10); },
 		[](__m128i a) { return _mm_slli_si128(a, 11); },
 		[](__m128i a) { return _mm_slli_si128(a, 12); },
@@ -791,7 +807,10 @@ namespace slli_si128 {
 		[](__m128i a) { return _mm_slli_si128(a, 16); },
 	};
 } // namespace slli_si128
-__m128i sse2_slli_si128(__m128i a, uint8_t imm8) { if (imm8 > 16) imm8 = 16; return slli_si128::map[imm8](a); }
+__m128i sse2_slli_si128(__m128i a, uint8_t imm8) {
+	if (imm8 > 16) imm8 = 16;
+	return slli_si128::map[imm8](a);
+}
 __m128d sse2_sqrt_pd(__m128d a) { return _mm_sqrt_pd(a); }
 __m128d sse2_sqrt_sd(__m128d a, __m128d b) { return _mm_sqrt_sd(a, b); }
 __m128i sse2_sra_epi16(__m128i a, __m128i count) { return _mm_sra_epi16(a, count); }
@@ -805,18 +824,18 @@ __m128i sse2_srli_epi16(__m128i a, uint8_t imm8) { return _mm_srli_epi16(a, imm8
 __m128i sse2_srli_epi32(__m128i a, uint8_t imm8) { return _mm_srli_epi32(a, imm8); }
 __m128i sse2_srli_epi64(__m128i a, uint8_t imm8) { return _mm_srli_epi64(a, imm8); }
 namespace srli_si128 {
-	typedef __m128i(*function)(__m128i);
-	const function map[17] {
-		[](__m128i a) { return _mm_srli_si128(a,  0); },
-		[](__m128i a) { return _mm_srli_si128(a,  1); },
-		[](__m128i a) { return _mm_srli_si128(a,  2); },
-		[](__m128i a) { return _mm_srli_si128(a,  3); },
-		[](__m128i a) { return _mm_srli_si128(a,  4); },
-		[](__m128i a) { return _mm_srli_si128(a,  5); },
-		[](__m128i a) { return _mm_srli_si128(a,  6); },
-		[](__m128i a) { return _mm_srli_si128(a,  7); },
-		[](__m128i a) { return _mm_srli_si128(a,  8); },
-		[](__m128i a) { return _mm_srli_si128(a,  9); },
+	typedef __m128i (*function)(__m128i);
+	const function map[17]{
+		[](__m128i a) { return _mm_srli_si128(a, 0); },
+		[](__m128i a) { return _mm_srli_si128(a, 1); },
+		[](__m128i a) { return _mm_srli_si128(a, 2); },
+		[](__m128i a) { return _mm_srli_si128(a, 3); },
+		[](__m128i a) { return _mm_srli_si128(a, 4); },
+		[](__m128i a) { return _mm_srli_si128(a, 5); },
+		[](__m128i a) { return _mm_srli_si128(a, 6); },
+		[](__m128i a) { return _mm_srli_si128(a, 7); },
+		[](__m128i a) { return _mm_srli_si128(a, 8); },
+		[](__m128i a) { return _mm_srli_si128(a, 9); },
 		[](__m128i a) { return _mm_srli_si128(a, 10); },
 		[](__m128i a) { return _mm_srli_si128(a, 11); },
 		[](__m128i a) { return _mm_srli_si128(a, 12); },
@@ -826,7 +845,10 @@ namespace srli_si128 {
 		[](__m128i a) { return _mm_srli_si128(a, 16); },
 	};
 } // namespace srli_si128
-__m128i sse2_srli_si128(__m128i a, uint8_t imm8) { if (imm8 > 16) imm8 = 16; return srli_si128::map[imm8](a); }
+__m128i sse2_srli_si128(__m128i a, uint8_t imm8) {
+	if (imm8 > 16) imm8 = 16;
+	return srli_si128::map[imm8](a);
+}
 void sse2_store_pd(double* mem_addr, __m128d a) { _mm_store_pd(mem_addr, a); }
 void sse2_store_pd1(double* mem_addr, __m128d a) { _mm_store_pd1(mem_addr, a); }
 void sse2_store_sd(double* mem_addr, __m128d a) { _mm_store_sd(mem_addr, a); }
@@ -841,7 +863,7 @@ void sse2_storeu_si128(__m128i* mem_addr, __m128i a) { _mm_storeu_si128(mem_addr
 void sse2_stream_pd(double* mem_addr, __m128d a) { _mm_stream_pd(mem_addr, a); }
 void sse2_stream_si128(__m128i* mem_addr, __m128i a) { _mm_stream_si128(mem_addr, a); }
 void sse2_stream_si32(int32_t* mem_addr, int32_t a) { _mm_stream_si32(mem_addr, a); }
-void sse2_stream_si64(int64_t* mem_addr, int64_t a) { _mm_stream_si64((long long*)mem_addr, a); }
+void sse2_stream_si64(int64_t* mem_addr, int64_t a) { _mm_stream_si64((long long*) mem_addr, a); }
 __m128i sse2_sub_epi16(__m128i a, __m128i b) { return _mm_sub_epi16(a, b); }
 __m128i sse2_sub_epi32(__m128i a, __m128i b) { return _mm_sub_epi32(a, b); }
 __m128i sse2_sub_epi64(__m128i a, __m128i b) { return _mm_sub_epi64(a, b); }
@@ -858,8 +880,8 @@ bool sse2_ucomigt_sd(__m128d a, __m128d b) { return _mm_ucomigt_sd(a, b); }
 bool sse2_ucomile_sd(__m128d a, __m128d b) { return _mm_ucomile_sd(a, b); }
 bool sse2_ucomilt_sd(__m128d a, __m128d b) { return _mm_ucomilt_sd(a, b); }
 bool sse2_ucomineq_sd(__m128d a, __m128d b) { return _mm_ucomineq_sd(a, b); }
-__m128d sse2_undefined_pd(void) { return _mm_undefined_pd(); }
-__m128i sse2_undefined_si128(void) { return _mm_undefined_si128(); }
+__m128d sse2_undefined_pd() { return _mm_undefined_pd(); }
+__m128i sse2_undefined_si128() { return _mm_undefined_si128(); }
 __m128i sse2_unpackhi_epi16(__m128i a, __m128i b) { return _mm_unpackhi_epi16(a, b); }
 __m128i sse2_unpackhi_epi32(__m128i a, __m128i b) { return _mm_unpackhi_epi32(a, b); }
 __m128i sse2_unpackhi_epi64(__m128i a, __m128i b) { return _mm_unpackhi_epi64(a, b); }

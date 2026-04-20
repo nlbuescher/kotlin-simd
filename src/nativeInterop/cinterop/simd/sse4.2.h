@@ -21,23 +21,23 @@ const int32_t SIDD_SBYTE_OPS = 0x02;
 const int32_t SIDD_SWORD_OPS = 0x03;
 
 // These macros specify the comparison operation
-const int32_t SIDD_CMP_EQUAL_ANY     = 0x00;
-const int32_t SIDD_CMP_RANGES        = 0x04;
-const int32_t SIDD_CMP_EQUAL_EACH    = 0x08;
+const int32_t SIDD_CMP_EQUAL_ANY = 0x00;
+const int32_t SIDD_CMP_RANGES = 0x04;
+const int32_t SIDD_CMP_EQUAL_EACH = 0x08;
 const int32_t SIDD_CMP_EQUAL_ORDERED = 0x0C;
 
 // These macros specify the polarity
-const int32_t SIDD_POSITIVE_POLARITY        = 0x00;
-const int32_t SIDD_NEGATIVE_POLARITY        = 0x10;
+const int32_t SIDD_POSITIVE_POLARITY = 0x00;
+const int32_t SIDD_NEGATIVE_POLARITY = 0x10;
 const int32_t SIDD_MASKED_POSITIVE_POLARITY = 0x20;
 const int32_t SIDD_MASKED_NEGATIVE_POLARITY = 0x30;
 
 // These macros specify the output selection in _mm_cmpXstri()
 const int32_t SIDD_LEAST_SIGNIFICANT = 0x00;
-const int32_t SIDD_MOST_SIGNIFICANT  = 0x40;
+const int32_t SIDD_MOST_SIGNIFICANT = 0x40;
 
 // These macros specify the output selection in _mm_cmpXstrm()
-const int32_t SIDD_BIT_MASK  = 0x00;
+const int32_t SIDD_BIT_MASK = 0x00;
 const int32_t SIDD_UNIT_MASK = 0x40;
 
 bool sse4_2_cmpestra(__m128i a, int32_t la, __m128i b, int32_t lb, uint8_t imm8);

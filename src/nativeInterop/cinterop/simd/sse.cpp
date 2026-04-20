@@ -1,6 +1,6 @@
-#include <xmmintrin.h>
-
 #include "sse.h"
+
+#include <xmmintrin.h>
 
 __m128 sse_add_ps(__m128 a, __m128 b) { return _mm_add_ps(a, b); }
 __m128 sse_add_ss(__m128 a, __m128 b) { return _mm_add_ss(a, b); }
@@ -53,7 +53,7 @@ uint32_t sse_get_exception_mask() { return _MM_GET_EXCEPTION_MASK(); }
 uint32_t sse_get_exception_state() { return _MM_GET_EXCEPTION_STATE(); }
 uint32_t sse_get_flush_zero_mode() { return _MM_GET_FLUSH_ZERO_MODE(); }
 uint32_t sse_get_rounding_mode() { return _MM_GET_ROUNDING_MODE(); }
-uint32_t sse_getcsr(void) { return _mm_getcsr(); }
+uint32_t sse_getcsr() { return _mm_getcsr(); }
 __m128 sse_load_ps(const float* mem_addr) { return _mm_load_ps(mem_addr); }
 __m128 sse_load_ps1(const float* mem_addr) { return _mm_load_ps1(mem_addr); }
 __m128 sse_load_ss(const float* mem_addr) { return _mm_load_ss(mem_addr); }
@@ -73,8 +73,8 @@ __m128 sse_mul_ps(__m128 a, __m128 b) { return _mm_mul_ps(a, b); }
 __m128 sse_mul_ss(__m128 a, __m128 b) { return _mm_mul_ss(a, b); }
 __m128 sse_or_ps(__m128 a, __m128 b) { return _mm_or_ps(a, b); }
 namespace prefetch {
-	typedef void(*function)(const int8_t*);
-	const function map[4] {
+	typedef void (*function)(const int8_t*);
+	const function map[4]{
 		[](const int8_t* p) { return _mm_prefetch((const char *)p, 0); },
 		[](const int8_t* p) { return _mm_prefetch((const char *)p, 1); },
 		[](const int8_t* p) { return _mm_prefetch((const char *)p, 2); },
@@ -96,11 +96,11 @@ __m128 sse_set_ss(float a) { return _mm_set_ss(a); }
 __m128 sse_set1_ps(float a) { return _mm_set1_ps(a); }
 void sse_setcsr(uint32_t a) { _mm_setcsr(a); }
 __m128 sse_setr_ps(float e3, float e2, float e1, float e0) { return _mm_setr_ps(e3, e2, e1, e0); }
-__m128 sse_setzero_ps(void) { return _mm_setzero_ps(); }
-void sse_sfence(void) { _mm_sfence(); }
+__m128 sse_setzero_ps() { return _mm_setzero_ps(); }
+void sse_sfence() { _mm_sfence(); }
 namespace shuffle_ps {
-	typedef __m128(*function)(__m128, __m128);
-	const function map[256] {
+	typedef __m128 (*function)(__m128, __m128);
+	const function map[256]{
 		[](__m128 a, __m128 b) { return _mm_shuffle_ps(a, b, 0x00); },
 		[](__m128 a, __m128 b) { return _mm_shuffle_ps(a, b, 0x01); },
 		[](__m128 a, __m128 b) { return _mm_shuffle_ps(a, b, 0x02); },
@@ -371,14 +371,16 @@ void sse_storeu_ps(float* mem_addr, __m128 a) { _mm_storeu_ps(mem_addr, a); }
 void sse_stream_ps(float* mem_addr, __m128 a) { _mm_stream_ps(mem_addr, a); }
 __m128 sse_sub_ps(__m128 a, __m128 b) { return _mm_sub_ps(a, b); }
 __m128 sse_sub_ss(__m128 a, __m128 b) { return _mm_sub_ss(a, b); }
-void sse_transpose4_ps(__m128 row0, __m128 row1, __m128 row2, __m128 row3) { _MM_TRANSPOSE4_PS(row0, row1, row2, row3); }
+void sse_transpose4_ps(__m128 row0, __m128 row1, __m128 row2, __m128 row3) {
+	_MM_TRANSPOSE4_PS(row0, row1, row2, row3);
+}
 bool sse_ucomieq_ss(__m128 a, __m128 b) { return _mm_ucomieq_ss(a, b); }
 bool sse_ucomige_ss(__m128 a, __m128 b) { return _mm_ucomige_ss(a, b); }
 bool sse_ucomigt_ss(__m128 a, __m128 b) { return _mm_ucomigt_ss(a, b); }
 bool sse_ucomile_ss(__m128 a, __m128 b) { return _mm_ucomile_ss(a, b); }
 bool sse_ucomilt_ss(__m128 a, __m128 b) { return _mm_ucomilt_ss(a, b); }
 bool sse_ucomineq_ss(__m128 a, __m128 b) { return _mm_ucomineq_ss(a, b); }
-__m128 sse_undefined_ps(void) { return _mm_undefined_ps(); }
+__m128 sse_undefined_ps() { return _mm_undefined_ps(); }
 __m128 sse_unpackhi_ps(__m128 a, __m128 b) { return _mm_unpackhi_ps(a, b); }
 __m128 sse_unpacklo_ps(__m128 a, __m128 b) { return _mm_unpacklo_ps(a, b); }
 __m128 sse_xor_ps(__m128 a, __m128 b) { return _mm_xor_ps(a, b); }

@@ -15,36 +15,36 @@ typedef float __m128 __attribute__((__vector_size__(16), __aligned__(16)));
 extern "C" {
 #endif
 
-const int32_t SSE_HINT_T0  = 3;
-const int32_t SSE_HINT_T1  = 2;
-const int32_t SSE_HINT_T2  = 1;
+const int32_t SSE_HINT_T0 = 3;
+const int32_t SSE_HINT_T1 = 2;
+const int32_t SSE_HINT_T2 = 1;
 const int32_t SSE_HINT_NTA = 0;
 
-const uint32_t SSE_EXCEPT_MASK       = 0x003f;
-const uint32_t SSE_EXCEPT_INVALID    = 0x0001;
-const uint32_t SSE_EXCEPT_DENORM     = 0x0002;
-const uint32_t SSE_EXCEPT_DIV_ZERO   = 0x0004;
-const uint32_t SSE_EXCEPT_OVERFLOW   = 0x0008;
-const uint32_t SSE_EXCEPT_UNDERFLOW  = 0x0010;
-const uint32_t SSE_EXCEPT_INEXACT    = 0x0020;
+const uint32_t SSE_EXCEPT_MASK = 0x003f;
+const uint32_t SSE_EXCEPT_INVALID = 0x0001;
+const uint32_t SSE_EXCEPT_DENORM = 0x0002;
+const uint32_t SSE_EXCEPT_DIV_ZERO = 0x0004;
+const uint32_t SSE_EXCEPT_OVERFLOW = 0x0008;
+const uint32_t SSE_EXCEPT_UNDERFLOW = 0x0010;
+const uint32_t SSE_EXCEPT_INEXACT = 0x0020;
 
-const uint32_t SSE_MASK_MASK         = 0x1f80;
-const uint32_t SSE_MASK_INVALID      = 0x0080;
-const uint32_t SSE_MASK_DENORM       = 0x0100;
-const uint32_t SSE_MASK_DIV_ZERO     = 0x0200;
-const uint32_t SSE_MASK_OVERFLOW     = 0x0400;
-const uint32_t SSE_MASK_UNDERFLOW    = 0x0800;
-const uint32_t SSE_MASK_INEXACT      = 0x1000;
+const uint32_t SSE_MASK_MASK = 0x1f80;
+const uint32_t SSE_MASK_INVALID = 0x0080;
+const uint32_t SSE_MASK_DENORM = 0x0100;
+const uint32_t SSE_MASK_DIV_ZERO = 0x0200;
+const uint32_t SSE_MASK_OVERFLOW = 0x0400;
+const uint32_t SSE_MASK_UNDERFLOW = 0x0800;
+const uint32_t SSE_MASK_INEXACT = 0x1000;
 
-const uint32_t SSE_ROUND_MASK        = 0x6000;
-const uint32_t SSE_ROUND_NEAREST     = 0x0000;
-const uint32_t SSE_ROUND_DOWN        = 0x2000;
-const uint32_t SSE_ROUND_UP          = 0x4000;
+const uint32_t SSE_ROUND_MASK = 0x6000;
+const uint32_t SSE_ROUND_NEAREST = 0x0000;
+const uint32_t SSE_ROUND_DOWN = 0x2000;
+const uint32_t SSE_ROUND_UP = 0x4000;
 const uint32_t SSE_ROUND_TOWARD_ZERO = 0x6000;
 
-const uint32_t SSE_FLUSH_ZERO_MASK   = 0x8000;
-const uint32_t SSE_FLUSH_ZERO_ON     = 0x8000;
-const uint32_t SSE_FLUSH_ZERO_OFF    = 0x0000;
+const uint32_t SSE_FLUSH_ZERO_MASK = 0x8000;
+const uint32_t SSE_FLUSH_ZERO_ON = 0x8000;
+const uint32_t SSE_FLUSH_ZERO_OFF = 0x0000;
 
 __m128 sse_add_ps(__m128 a, __m128 b);
 __m128 sse_add_ss(__m128 a, __m128 b);

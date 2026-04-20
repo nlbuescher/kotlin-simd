@@ -1,6 +1,6 @@
-#include <pmmintrin.h>
-
 #include "sse3.h"
+
+#include <pmmintrin.h>
 
 __m128d sse3_addsub_pd(__m128d a, __m128d b) { return _mm_addsub_pd(a, b); }
 __m128 sse3_addsub_ps(__m128 a, __m128 b) { return _mm_addsub_ps(a, b); }

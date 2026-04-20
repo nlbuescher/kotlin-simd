@@ -1,10 +1,10 @@
-#include <smmintrin.h>
-
 #include "sse4.1.h"
 
+#include <smmintrin.h>
+
 namespace blend_epi16 {
-	typedef __m128i(*function)(__m128i, __m128i);
-	const function map[256] {
+	typedef __m128i (*function)(__m128i, __m128i);
+	const function map[256]{
 		[](__m128i a, __m128i b) { return _mm_blend_epi16(a, b, 0x00); },
 		[](__m128i a, __m128i b) { return _mm_blend_epi16(a, b, 0x01); },
 		[](__m128i a, __m128i b) { return _mm_blend_epi16(a, b, 0x02); },
@@ -265,8 +265,8 @@ namespace blend_epi16 {
 } // namespace blend_epi16
 __m128i sse4_1_blend_epi16(__m128i a, __m128i b, uint8_t imm8) { return blend_epi16::map[imm8](a, b); }
 namespace blend_pd {
-	typedef __m128d(*function)(__m128d, __m128d);
-	const function map[4] {
+	typedef __m128d (*function)(__m128d, __m128d);
+	const function map[4]{
 		[](__m128d a, __m128d b) { return _mm_blend_pd(a, b, 0); },
 		[](__m128d a, __m128d b) { return _mm_blend_pd(a, b, 1); },
 		[](__m128d a, __m128d b) { return _mm_blend_pd(a, b, 2); },
@@ -275,8 +275,8 @@ namespace blend_pd {
 } // namespace blend_pd
 __m128d sse4_1_blend_pd(__m128d a, __m128d b, uint8_t imm8) { return blend_pd::map[imm8 & 0x3](a, b); }
 namespace blend_ps {
-	typedef __m128(*function)(__m128, __m128);
-	const function map[8] {
+	typedef __m128 (*function)(__m128, __m128);
+	const function map[8]{
 		[](__m128 a, __m128 b) { return _mm_blend_ps(a, b, 0); },
 		[](__m128 a, __m128 b) { return _mm_blend_ps(a, b, 1); },
 		[](__m128 a, __m128 b) { return _mm_blend_ps(a, b, 2); },
@@ -309,8 +309,8 @@ __m128i sse4_1_cvtepu8_epi16(__m128i a) { return _mm_cvtepu8_epi16(a); }
 __m128i sse4_1_cvtepu8_epi32(__m128i a) { return _mm_cvtepu8_epi32(a); }
 __m128i sse4_1_cvtepu8_epi64(__m128i a) { return _mm_cvtepu8_epi64(a); }
 namespace dp_pd {
-	typedef __m128d(*function)(__m128d, __m128d);
-	const function map[256] {
+	typedef __m128d (*function)(__m128d, __m128d);
+	const function map[256]{
 		[](__m128d a, __m128d b) { return _mm_dp_pd(a, b, 0x00); },
 		[](__m128d a, __m128d b) { return _mm_dp_pd(a, b, 0x01); },
 		[](__m128d a, __m128d b) { return _mm_dp_pd(a, b, 0x02); },
@@ -571,8 +571,8 @@ namespace dp_pd {
 } // namespace dp_pd
 __m128d sse4_1_dp_pd(__m128d a, __m128d b, uint8_t imm8) { return dp_pd::map[imm8](a, b); }
 namespace dp_ps {
-	typedef __m128(*function)(__m128, __m128);
-	const function map[256] {
+	typedef __m128 (*function)(__m128, __m128);
+	const function map[256]{
 		[](__m128 a, __m128 b) { return _mm_dp_ps(a, b, 0x00); },
 		[](__m128 a, __m128 b) { return _mm_dp_ps(a, b, 0x01); },
 		[](__m128 a, __m128 b) { return _mm_dp_ps(a, b, 0x02); },
@@ -833,8 +833,8 @@ namespace dp_ps {
 } // namespace dp_ps
 __m128 sse4_1_dp_ps(__m128 a, __m128 b, uint8_t imm8) { return dp_ps::map[imm8](a, b); }
 namespace extract_epi32 {
-	typedef int32_t(*function)(__m128i);
-	const function map[4] {
+	typedef int32_t (*function)(__m128i);
+	const function map[4]{
 		[](__m128i a) { return _mm_extract_epi32(a, 0); },
 		[](__m128i a) { return _mm_extract_epi32(a, 1); },
 		[](__m128i a) { return _mm_extract_epi32(a, 2); },
@@ -843,42 +843,54 @@ namespace extract_epi32 {
 } // namespace extract_epi32
 int32_t sse4_1_extract_epi32(__m128i a, uint8_t imm8) { return extract_epi32::map[imm8 & 0x3](a); }
 namespace extract_epi64 {
-	typedef int64_t(*function)(__m128i);
-	const function map[2] {
-		[](__m128i a) { return (int64_t)_mm_extract_epi64(a, 0); },
-		[](__m128i a) { return (int64_t)_mm_extract_epi64(a, 1); },
+	typedef int64_t (*function)(__m128i);
+	const function map[2]{
+		[](__m128i a) { return (int64_t) _mm_extract_epi64(a, 0); },
+		[](__m128i a) { return (int64_t) _mm_extract_epi64(a, 1); },
 	};
 } // namespace extract_epi64
 int64_t sse4_1_extract_epi64(__m128i a, uint8_t imm8) { return extract_epi64::map[imm8 & 0x1](a); }
 namespace extract_epi8 {
-	typedef int8_t(*function)(__m128i);
-	const function map[16] {
-		[](__m128i a) { return (int8_t)_mm_extract_epi8(a,  0); },
-		[](__m128i a) { return (int8_t)_mm_extract_epi8(a,  1); },
-		[](__m128i a) { return (int8_t)_mm_extract_epi8(a,  2); },
-		[](__m128i a) { return (int8_t)_mm_extract_epi8(a,  3); },
-		[](__m128i a) { return (int8_t)_mm_extract_epi8(a,  4); },
-		[](__m128i a) { return (int8_t)_mm_extract_epi8(a,  5); },
-		[](__m128i a) { return (int8_t)_mm_extract_epi8(a,  6); },
-		[](__m128i a) { return (int8_t)_mm_extract_epi8(a,  7); },
-		[](__m128i a) { return (int8_t)_mm_extract_epi8(a,  8); },
-		[](__m128i a) { return (int8_t)_mm_extract_epi8(a,  9); },
-		[](__m128i a) { return (int8_t)_mm_extract_epi8(a, 10); },
-		[](__m128i a) { return (int8_t)_mm_extract_epi8(a, 11); },
-		[](__m128i a) { return (int8_t)_mm_extract_epi8(a, 12); },
-		[](__m128i a) { return (int8_t)_mm_extract_epi8(a, 13); },
-		[](__m128i a) { return (int8_t)_mm_extract_epi8(a, 14); },
-		[](__m128i a) { return (int8_t)_mm_extract_epi8(a, 15); },
+	typedef int8_t (*function)(__m128i);
+	const function map[16]{
+		[](__m128i a) { return (int8_t) _mm_extract_epi8(a, 0); },
+		[](__m128i a) { return (int8_t) _mm_extract_epi8(a, 1); },
+		[](__m128i a) { return (int8_t) _mm_extract_epi8(a, 2); },
+		[](__m128i a) { return (int8_t) _mm_extract_epi8(a, 3); },
+		[](__m128i a) { return (int8_t) _mm_extract_epi8(a, 4); },
+		[](__m128i a) { return (int8_t) _mm_extract_epi8(a, 5); },
+		[](__m128i a) { return (int8_t) _mm_extract_epi8(a, 6); },
+		[](__m128i a) { return (int8_t) _mm_extract_epi8(a, 7); },
+		[](__m128i a) { return (int8_t) _mm_extract_epi8(a, 8); },
+		[](__m128i a) { return (int8_t) _mm_extract_epi8(a, 9); },
+		[](__m128i a) { return (int8_t) _mm_extract_epi8(a, 10); },
+		[](__m128i a) { return (int8_t) _mm_extract_epi8(a, 11); },
+		[](__m128i a) { return (int8_t) _mm_extract_epi8(a, 12); },
+		[](__m128i a) { return (int8_t) _mm_extract_epi8(a, 13); },
+		[](__m128i a) { return (int8_t) _mm_extract_epi8(a, 14); },
+		[](__m128i a) { return (int8_t) _mm_extract_epi8(a, 15); },
 	};
 } // namespace extract_epi8
 int8_t sse4_1_extract_epi8(__m128i a, uint8_t imm8) { return extract_epi8::map[imm8 & 0xF](a); }
 namespace extract_ps {
-	typedef float(*function)(__m128);
-	const function map[4] {
-		[](__m128 a) { int i = _mm_extract_ps(a, 0); return *(float*)&i; },
-		[](__m128 a) { int i = _mm_extract_ps(a, 1); return *(float*)&i; },
-		[](__m128 a) { int i = _mm_extract_ps(a, 2); return *(float*)&i; },
-		[](__m128 a) { int i = _mm_extract_ps(a, 3); return *(float*)&i; },
+	typedef float (*function)(__m128);
+	const function map[4]{
+		[](__m128 a) {
+			int i = _mm_extract_ps(a, 0);
+			return *(float*) &i;
+		},
+		[](__m128 a) {
+			int i = _mm_extract_ps(a, 1);
+			return *(float*) &i;
+		},
+		[](__m128 a) {
+			int i = _mm_extract_ps(a, 2);
+			return *(float*) &i;
+		},
+		[](__m128 a) {
+			int i = _mm_extract_ps(a, 3);
+			return *(float*) &i;
+		},
 	};
 } // namespace extract_ps
 float sse4_1_extract_ps(__m128 a, uint8_t imm8) { return extract_ps::map[imm8 & 0x3](a); }
@@ -887,8 +899,8 @@ __m128 sse4_1_floor_ps(__m128 a) { return _mm_floor_ps(a); }
 __m128d sse4_1_floor_sd(__m128d a, __m128d b) { return _mm_floor_sd(a, b); }
 __m128 sse4_1_floor_ss(__m128 a, __m128 b) { return _mm_floor_ss(a, b); }
 namespace insert_epi32 {
-	typedef __m128i(*function)(__m128i, int32_t);
-	const function map[4] {
+	typedef __m128i (*function)(__m128i, int32_t);
+	const function map[4]{
 		[](__m128i a, int32_t i) { return _mm_insert_epi32(a, i, 0); },
 		[](__m128i a, int32_t i) { return _mm_insert_epi32(a, i, 1); },
 		[](__m128i a, int32_t i) { return _mm_insert_epi32(a, i, 2); },
@@ -897,26 +909,26 @@ namespace insert_epi32 {
 } // namespace insert_epi32
 __m128i sse4_1_insert_epi32(__m128i a, int32_t i, uint8_t imm8) { return insert_epi32::map[imm8 & 0x3](a, i); }
 namespace insert_epi64 {
-	typedef __m128i(*function)(__m128i, int64_t);
-	const function map[2] {
+	typedef __m128i (*function)(__m128i, int64_t);
+	const function map[2]{
 		[](__m128i a, int64_t i) { return _mm_insert_epi64(a, i, 0); },
 		[](__m128i a, int64_t i) { return _mm_insert_epi64(a, i, 1); },
 	};
 } // namespace insert_epi64
 __m128i sse4_1_insert_epi64(__m128i a, int64_t i, uint8_t imm8) { return insert_epi64::map[imm8 & 0x1](a, i); }
 namespace insert_epi8 {
-	typedef __m128i(*function)(__m128i, int8_t);
-	const function map[16] {
-		[](__m128i a, int8_t i) { return _mm_insert_epi8(a, i,  0); },
-		[](__m128i a, int8_t i) { return _mm_insert_epi8(a, i,  1); },
-		[](__m128i a, int8_t i) { return _mm_insert_epi8(a, i,  2); },
-		[](__m128i a, int8_t i) { return _mm_insert_epi8(a, i,  3); },
-		[](__m128i a, int8_t i) { return _mm_insert_epi8(a, i,  4); },
-		[](__m128i a, int8_t i) { return _mm_insert_epi8(a, i,  5); },
-		[](__m128i a, int8_t i) { return _mm_insert_epi8(a, i,  6); },
-		[](__m128i a, int8_t i) { return _mm_insert_epi8(a, i,  7); },
-		[](__m128i a, int8_t i) { return _mm_insert_epi8(a, i,  8); },
-		[](__m128i a, int8_t i) { return _mm_insert_epi8(a, i,  9); },
+	typedef __m128i (*function)(__m128i, int8_t);
+	const function map[16]{
+		[](__m128i a, int8_t i) { return _mm_insert_epi8(a, i, 0); },
+		[](__m128i a, int8_t i) { return _mm_insert_epi8(a, i, 1); },
+		[](__m128i a, int8_t i) { return _mm_insert_epi8(a, i, 2); },
+		[](__m128i a, int8_t i) { return _mm_insert_epi8(a, i, 3); },
+		[](__m128i a, int8_t i) { return _mm_insert_epi8(a, i, 4); },
+		[](__m128i a, int8_t i) { return _mm_insert_epi8(a, i, 5); },
+		[](__m128i a, int8_t i) { return _mm_insert_epi8(a, i, 6); },
+		[](__m128i a, int8_t i) { return _mm_insert_epi8(a, i, 7); },
+		[](__m128i a, int8_t i) { return _mm_insert_epi8(a, i, 8); },
+		[](__m128i a, int8_t i) { return _mm_insert_epi8(a, i, 9); },
 		[](__m128i a, int8_t i) { return _mm_insert_epi8(a, i, 10); },
 		[](__m128i a, int8_t i) { return _mm_insert_epi8(a, i, 11); },
 		[](__m128i a, int8_t i) { return _mm_insert_epi8(a, i, 12); },
@@ -927,8 +939,8 @@ namespace insert_epi8 {
 } // namespace insert_epi8
 __m128i sse4_1_insert_epi8(__m128i a, int8_t i, uint8_t imm8) { return insert_epi8::map[imm8 & 0xF](a, i); }
 namespace insert_ps {
-	typedef __m128(*function)(__m128, __m128);
-	const function map[256] {
+	typedef __m128 (*function)(__m128, __m128);
+	const function map[256]{
 		[](__m128 a, __m128 b) { return _mm_insert_ps(a, b, 0x00); },
 		[](__m128 a, __m128 b) { return _mm_insert_ps(a, b, 0x01); },
 		[](__m128 a, __m128 b) { return _mm_insert_ps(a, b, 0x02); },
@@ -1198,8 +1210,8 @@ __m128i sse4_1_min_epu16(__m128i a, __m128i b) { return _mm_min_epu16(a, b); }
 __m128i sse4_1_min_epu32(__m128i a, __m128i b) { return _mm_min_epu32(a, b); }
 __m128i sse4_1_minpos_epu16(__m128i a) { return _mm_minpos_epu16(a); }
 namespace mpsadbw_epu8 {
-	typedef __m128i(*function)(__m128i, __m128i);
-	const function map[8] {
+	typedef __m128i (*function)(__m128i, __m128i);
+	const function map[8]{
 		[](__m128i a, __m128i b) { return _mm_mpsadbw_epu8(a, b, 0); },
 		[](__m128i a, __m128i b) { return _mm_mpsadbw_epu8(a, b, 1); },
 		[](__m128i a, __m128i b) { return _mm_mpsadbw_epu8(a, b, 2); },
@@ -1215,18 +1227,18 @@ __m128i sse4_1_mul_epi32(__m128i a, __m128i b) { return _mm_mul_epi32(a, b); }
 __m128i sse4_1_mullo_epi32(__m128i a, __m128i b) { return _mm_mullo_epi32(a, b); }
 __m128i sse4_1_packus_epi32(__m128i a, __m128i b) { return _mm_packus_epi32(a, b); }
 namespace round_pd {
-	typedef __m128d(*function)(__m128d);
-	const function map[16] {
-		[](__m128d a) { return _mm_round_pd(a,  0); },
-		[](__m128d a) { return _mm_round_pd(a,  1); },
-		[](__m128d a) { return _mm_round_pd(a,  2); },
-		[](__m128d a) { return _mm_round_pd(a,  3); },
-		[](__m128d a) { return _mm_round_pd(a,  4); },
-		[](__m128d a) { return _mm_round_pd(a,  5); },
-		[](__m128d a) { return _mm_round_pd(a,  6); },
-		[](__m128d a) { return _mm_round_pd(a,  7); },
-		[](__m128d a) { return _mm_round_pd(a,  8); },
-		[](__m128d a) { return _mm_round_pd(a,  9); },
+	typedef __m128d (*function)(__m128d);
+	const function map[16]{
+		[](__m128d a) { return _mm_round_pd(a, 0); },
+		[](__m128d a) { return _mm_round_pd(a, 1); },
+		[](__m128d a) { return _mm_round_pd(a, 2); },
+		[](__m128d a) { return _mm_round_pd(a, 3); },
+		[](__m128d a) { return _mm_round_pd(a, 4); },
+		[](__m128d a) { return _mm_round_pd(a, 5); },
+		[](__m128d a) { return _mm_round_pd(a, 6); },
+		[](__m128d a) { return _mm_round_pd(a, 7); },
+		[](__m128d a) { return _mm_round_pd(a, 8); },
+		[](__m128d a) { return _mm_round_pd(a, 9); },
 		[](__m128d a) { return _mm_round_pd(a, 10); },
 		[](__m128d a) { return _mm_round_pd(a, 11); },
 		[](__m128d a) { return _mm_round_pd(a, 12); },
@@ -1237,18 +1249,18 @@ namespace round_pd {
 } // namespace round_pd
 __m128d sse4_1_round_pd(__m128d a, int32_t rounding) { return round_pd::map[rounding & 0xF](a); }
 namespace round_ps {
-	typedef __m128(*function)(__m128);
-	const function map[16] {
-		[](__m128 a) { return _mm_round_ps(a,  0); },
-		[](__m128 a) { return _mm_round_ps(a,  1); },
-		[](__m128 a) { return _mm_round_ps(a,  2); },
-		[](__m128 a) { return _mm_round_ps(a,  3); },
-		[](__m128 a) { return _mm_round_ps(a,  4); },
-		[](__m128 a) { return _mm_round_ps(a,  5); },
-		[](__m128 a) { return _mm_round_ps(a,  6); },
-		[](__m128 a) { return _mm_round_ps(a,  7); },
-		[](__m128 a) { return _mm_round_ps(a,  8); },
-		[](__m128 a) { return _mm_round_ps(a,  9); },
+	typedef __m128 (*function)(__m128);
+	const function map[16]{
+		[](__m128 a) { return _mm_round_ps(a, 0); },
+		[](__m128 a) { return _mm_round_ps(a, 1); },
+		[](__m128 a) { return _mm_round_ps(a, 2); },
+		[](__m128 a) { return _mm_round_ps(a, 3); },
+		[](__m128 a) { return _mm_round_ps(a, 4); },
+		[](__m128 a) { return _mm_round_ps(a, 5); },
+		[](__m128 a) { return _mm_round_ps(a, 6); },
+		[](__m128 a) { return _mm_round_ps(a, 7); },
+		[](__m128 a) { return _mm_round_ps(a, 8); },
+		[](__m128 a) { return _mm_round_ps(a, 9); },
 		[](__m128 a) { return _mm_round_ps(a, 10); },
 		[](__m128 a) { return _mm_round_ps(a, 11); },
 		[](__m128 a) { return _mm_round_ps(a, 12); },
@@ -1259,18 +1271,18 @@ namespace round_ps {
 } // namespace round_ps
 __m128 sse4_1_round_ps(__m128 a, int32_t rounding) { return round_ps::map[rounding & 0xF](a); }
 namespace round_sd {
-	typedef __m128d(*function)(__m128d, __m128d);
-	const function map[16] {
-		[](__m128d a, __m128d b) { return _mm_round_sd(a, b,  0); },
-		[](__m128d a, __m128d b) { return _mm_round_sd(a, b,  1); },
-		[](__m128d a, __m128d b) { return _mm_round_sd(a, b,  2); },
-		[](__m128d a, __m128d b) { return _mm_round_sd(a, b,  3); },
-		[](__m128d a, __m128d b) { return _mm_round_sd(a, b,  4); },
-		[](__m128d a, __m128d b) { return _mm_round_sd(a, b,  5); },
-		[](__m128d a, __m128d b) { return _mm_round_sd(a, b,  6); },
-		[](__m128d a, __m128d b) { return _mm_round_sd(a, b,  7); },
-		[](__m128d a, __m128d b) { return _mm_round_sd(a, b,  8); },
-		[](__m128d a, __m128d b) { return _mm_round_sd(a, b,  9); },
+	typedef __m128d (*function)(__m128d, __m128d);
+	const function map[16]{
+		[](__m128d a, __m128d b) { return _mm_round_sd(a, b, 0); },
+		[](__m128d a, __m128d b) { return _mm_round_sd(a, b, 1); },
+		[](__m128d a, __m128d b) { return _mm_round_sd(a, b, 2); },
+		[](__m128d a, __m128d b) { return _mm_round_sd(a, b, 3); },
+		[](__m128d a, __m128d b) { return _mm_round_sd(a, b, 4); },
+		[](__m128d a, __m128d b) { return _mm_round_sd(a, b, 5); },
+		[](__m128d a, __m128d b) { return _mm_round_sd(a, b, 6); },
+		[](__m128d a, __m128d b) { return _mm_round_sd(a, b, 7); },
+		[](__m128d a, __m128d b) { return _mm_round_sd(a, b, 8); },
+		[](__m128d a, __m128d b) { return _mm_round_sd(a, b, 9); },
 		[](__m128d a, __m128d b) { return _mm_round_sd(a, b, 10); },
 		[](__m128d a, __m128d b) { return _mm_round_sd(a, b, 11); },
 		[](__m128d a, __m128d b) { return _mm_round_sd(a, b, 12); },
@@ -1281,18 +1293,18 @@ namespace round_sd {
 } // namespace round_sd
 __m128d sse4_1_round_sd(__m128d a, __m128d b, int32_t rounding) { return round_sd::map[rounding & 0xF](a, b); }
 namespace round_ss {
-	typedef __m128(*function)(__m128, __m128);
-	const function map[16] {
-		[](__m128 a, __m128 b) { return _mm_round_ss(a, b,  0); },
-		[](__m128 a, __m128 b) { return _mm_round_ss(a, b,  1); },
-		[](__m128 a, __m128 b) { return _mm_round_ss(a, b,  2); },
-		[](__m128 a, __m128 b) { return _mm_round_ss(a, b,  3); },
-		[](__m128 a, __m128 b) { return _mm_round_ss(a, b,  4); },
-		[](__m128 a, __m128 b) { return _mm_round_ss(a, b,  5); },
-		[](__m128 a, __m128 b) { return _mm_round_ss(a, b,  6); },
-		[](__m128 a, __m128 b) { return _mm_round_ss(a, b,  7); },
-		[](__m128 a, __m128 b) { return _mm_round_ss(a, b,  8); },
-		[](__m128 a, __m128 b) { return _mm_round_ss(a, b,  9); },
+	typedef __m128 (*function)(__m128, __m128);
+	const function map[16]{
+		[](__m128 a, __m128 b) { return _mm_round_ss(a, b, 0); },
+		[](__m128 a, __m128 b) { return _mm_round_ss(a, b, 1); },
+		[](__m128 a, __m128 b) { return _mm_round_ss(a, b, 2); },
+		[](__m128 a, __m128 b) { return _mm_round_ss(a, b, 3); },
+		[](__m128 a, __m128 b) { return _mm_round_ss(a, b, 4); },
+		[](__m128 a, __m128 b) { return _mm_round_ss(a, b, 5); },
+		[](__m128 a, __m128 b) { return _mm_round_ss(a, b, 6); },
+		[](__m128 a, __m128 b) { return _mm_round_ss(a, b, 7); },
+		[](__m128 a, __m128 b) { return _mm_round_ss(a, b, 8); },
+		[](__m128 a, __m128 b) { return _mm_round_ss(a, b, 9); },
 		[](__m128 a, __m128 b) { return _mm_round_ss(a, b, 10); },
 		[](__m128 a, __m128 b) { return _mm_round_ss(a, b, 11); },
 		[](__m128 a, __m128 b) { return _mm_round_ss(a, b, 12); },
