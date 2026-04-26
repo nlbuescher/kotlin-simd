@@ -30,8 +30,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
 
       - name: Set up java
         uses: actions/setup-java@v5
@@ -39,10 +37,10 @@ jobs:
           distribution: temurin
           java-version: 25
 
-      - name: Run check task
+      - name: Test
         run: ./gradlew check --stacktrace
 
-      - name: Run publish task
+      - name: Prepare artifacts
         run: ./gradlew smartPublish --stacktrace
 
       - name: Upload artifacts
@@ -59,8 +57,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
 
       - name: Set up java
         uses: actions/setup-java@v5

@@ -155,8 +155,8 @@ __m128i sse2_set_epi16(int16_t e7, int16_t e6, int16_t e5, int16_t e4, int16_t e
 __m128i sse2_set_epi32(int32_t e3, int32_t e2, int32_t e1, int32_t e0);
 __m128i sse2_set_epi64x(int64_t e1, int64_t e0);
 __m128i sse2_set_epi8(
-	int8_t e15, int8_t e14, int8_t e13, int8_t e12, int8_t e11, int8_t e10, int8_t e9, int8_t e8,
-	int8_t e7, int8_t e6, int8_t e5, int8_t e4, int8_t e3, int8_t e2, int8_t e1, int8_t e0
+    int8_t e15, int8_t e14, int8_t e13, int8_t e12, int8_t e11, int8_t e10, int8_t e9, int8_t e8,
+    int8_t e7, int8_t e6, int8_t e5, int8_t e4, int8_t e3, int8_t e2, int8_t e1, int8_t e0
 );
 __m128d sse2_set_pd(double e1, double e0);
 __m128d sse2_set_pd1(double a);
@@ -169,8 +169,8 @@ __m128d sse2_set1_pd(double a);
 __m128i sse2_setr_epi16(int16_t e7, int16_t e6, int16_t e5, int16_t e4, int16_t e3, int16_t e2, int16_t e1, int16_t e0);
 __m128i sse2_setr_epi32(int32_t e3, int32_t e2, int32_t e1, int32_t e0);
 __m128i sse2_setr_epi8(
-	int8_t e15, int8_t e14, int8_t e13, int8_t e12, int8_t e11, int8_t e10, int8_t e9, int8_t e8,
-	int8_t e7, int8_t e6, int8_t e5, int8_t e4, int8_t e3, int8_t e2, int8_t e1, int8_t e0
+    int8_t e15, int8_t e14, int8_t e13, int8_t e12, int8_t e11, int8_t e10, int8_t e9, int8_t e8,
+    int8_t e7, int8_t e6, int8_t e5, int8_t e4, int8_t e3, int8_t e2, int8_t e1, int8_t e0
 );
 __m128d sse2_setr_pd(double e1, double e0);
 __m128d sse2_setzero_pd(void);

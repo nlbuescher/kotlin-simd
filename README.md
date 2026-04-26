@@ -20,3 +20,12 @@ fun round(x: Vector128): Vector128 = when {
 	}
 }
 ```
+
+In order to use the SIMD functions from common source sets like
+`nativeMain` or similar, cinterop commonization needs to be enabled in `gradle.properties`:
+
+```properties
+kotlin.mpp.enableCinteropCommonization=true
+```
+
+This is only required if using functions from the `platform.simd` package directly.
