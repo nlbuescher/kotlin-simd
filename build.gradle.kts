@@ -30,40 +30,15 @@ val platformManager: PlatformManager by lazy {
     PlatformManager(downloader.compilerDirectory.absolutePath)
 }
 
-val simdNames = listOf("sse", "sse2", "sse3", "ssse3", "sse4.1", "sse4.2")
-
 fun registerBuildSimdTaskForTarget(konanTarget: KonanTarget): TaskProvider<Exec> {
     val targetBuildDir = cppBuildDir.dir(konanTarget.presetName)
     val presetSuffix = konanTarget.presetName.replaceFirstChar { it.uppercase() }
 
     val platform = platformManager.platform(konanTarget)
 
-    val compileTasks = simdNames.map { name ->
-        val objectSuffix = name.replaceFirstChar { it.uppercase() }
-
-        tasks.register<Exec>("compile$objectSuffix$presetSuffix") {
-            group = "build"
-
-            val sourceFile = cppSrcDir.file("$name.cpp")
-            val objectFile = targetBuildDir.file("$name.o")
-
-            inputs.files(cppSrcDir.asFileTree.filter { it.name.startsWith(name) })
-            outputs.file(targetBuildDir.file("$name.o"))
-
-            commandLine(
-                platform.clang.clangCXX(
-                    "-std=c++20", "-O3", "-fPIC", "-m$name", "-c", "-o", "$objectFile", "$sourceFile"
-                ),
-            )
-        }
-    }
-
     val compileSimd = tasks.register<Exec>("compileSimd$presetSuffix") {
         group = "build"
-
-        compileTasks.forEach {
-            dependsOn(it)
-        }
+        description = ""
 
         val sourceFile = cppSrcDir.file("simd.cpp")
         val objectFile = targetBuildDir.file("simd.o")
@@ -72,33 +47,32 @@ fun registerBuildSimdTaskForTarget(konanTarget: KonanTarget): TaskProvider<Exec>
         inputs.file(sourceFile)
         outputs.file(objectFile)
 
-        commandLine(platform.clang.clangCXX("-std=c++20", "-O3", "-fPIC", "-c", "-o", "$objectFile", "$sourceFile"))
+        commandLine(platform.clang.clangCXX("-std=c++26", "-O3", "-fPIC", "-c", "-o", "$objectFile", "$sourceFile"))
     }
 
-    val buildSimd = tasks.register<Exec>("buildSimd$presetSuffix") {
+    val archiveSimd = tasks.register<Exec>("archiveSimd$presetSuffix") {
         group = "build"
+        description = ""
 
         dependsOn(compileSimd)
 
-        val objectFiles = (listOf(targetBuildDir.file("simd.o")) + simdNames.map { targetBuildDir.file("$it.o") })
-            .map { it.toString() }
-            .toTypedArray()
+        val objectFile = targetBuildDir.file("simd.o")
         val archiveFile = targetBuildDir.file("libsimd.a")
 
-        compileTasks.forEach { inputs.files(it.get().outputs.files) }
         inputs.files(compileSimd.get().outputs.files)
         outputs.file(archiveFile)
 
-        commandLine(platform.clang.llvmAr("-rcs", "$archiveFile", *objectFiles))
+        commandLine(platform.clang.llvmAr("-rcs", "$archiveFile", "$objectFile"))
     }
 
-    return buildSimd
+    return archiveSimd
 }
 
 kotlin {
     withSourcesJar()
 
     linuxX64()
+    @Suppress("DEPRECATION")
     macosX64()
     mingwX64()
 
@@ -136,7 +110,9 @@ kotlin {
     }
 }
 
-val dokkaJar by tasks.registering(Jar::class) {
+val dokkaJar = tasks.register("dokkaJar", Jar::class) {
+    description = ""
+
     from(tasks.dokkaGeneratePublicationHtml.flatMap { it.outputDirectory })
     archiveClassifier.set("javadoc")
 }
@@ -197,6 +173,7 @@ val publishTasks = HostManager.host
 
 tasks.register("smartPublish") {
     group = "publishing"
+    description = ""
 
     publishTasks.forEach {
         dependsOn(it)
