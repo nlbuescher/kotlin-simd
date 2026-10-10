@@ -23,7 +23,7 @@ jobs:
           - target: linuxX64
             os: ubuntu-latest
           - target: macosX64
-            os: macos-26-intel
+            os: macos-15-intel
           - target: mingwX64
             os: windows-latest
     runs-on: ${{ matrix.os }}
@@ -31,11 +31,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
+      - name: Select Xcode 16.0
+        if: runner.os == 'macOS'
+        run: |
+          sudo xcode-select --switch /Applications/Xcode_16.0.app/Contents/Developer
+          xcodebuild -version
+
       - name: Set up java
         uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: 25
+          java-version: 21
 
       - name: Test
         run: ./gradlew check --stacktrace
@@ -62,7 +68,7 @@ jobs:
         uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: 25
+          java-version: 21
 
       - name: Download artifacts
         uses: actions/download-artifact@v7
