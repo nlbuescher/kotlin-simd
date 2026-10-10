@@ -5,19 +5,20 @@
 
 Exposes SSE, SSE2, SSE3, SSSE3, SSE4.1, and SSE4.2 compiler intrincs to Kotlin/Native as functions.
 
-SSE Support can be checked by using the boolean constants defined by the library (simply called SSE, SSE2, etc). This allows changing implementation at runtime based on hardware SSE support:
+SSE Support can be checked by using the boolean constants defined by the library (simply called SSE, SSE2, etc). This
+allows changing implementation at runtime based on hardware SSE support:
 
 ```kotlin
 fun round(x: Vector128): Vector128 = when {
-	SSE4_1 -> sse4_1_round_ps(x, SSE4_1_FROUND_NEARBYINT)
-	else -> {
-		vectorOf(
-			round(x.getFloatAt(0)),
-			round(x.getFloatAt(1)),
-			round(x.getFloatAt(2)),
-			round(x.getFloatAt(3)),
-		)
-	}
+    SSE4_1 -> sse4_1_round_ps(x, SSE4_1_FROUND_NEARBYINT)
+    else -> {
+        vectorOf(
+            round(x.getFloatAt(0)),
+            round(x.getFloatAt(1)),
+            round(x.getFloatAt(2)),
+            round(x.getFloatAt(3)),
+        )
+    }
 }
 ```
 
@@ -29,3 +30,14 @@ kotlin.mpp.enableCinteropCommonization=true
 ```
 
 This is only required if using functions from the `platform.simd` package directly.
+
+## Versioning and Kotlin compatibility
+
+Starting with `2.0.x`, library release lines follow the Kotlin compiler's
+major/minor version (`2.0.x` is built with Kotlin `2.0.x`). Library patch numbers
+are independent of Kotlin's patch numbers.
+
+Moving between major/minor release lines is considered a breaking change and
+may require upgrading your Kotlin compiler. Cross-version compatibility of the
+published cinterop KLIBs is not guaranteed. This is Kotlin-aligned versioning,
+not strict SemVer.

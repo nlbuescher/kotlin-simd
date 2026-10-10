@@ -1,9 +1,5 @@
 #include "simd.h"
 
-#include <cstddef>
-#include <cstdint>
-#include <utility>
-
 #include <cpuid.h>
 #include <immintrin.h>
 
@@ -49,17 +45,9 @@ extern "C" const bool
 
 #define TARGET(x) [[gnu::target(x)]]
 
-#ifdef __cpp_lib_unreachable
-#define unreachable() std::unreachable()
-#else
 #define unreachable() __builtin_unreachable()
-#endif
 
-#ifdef __cpp_lib_bit_cast
-#define bit_cast(T, x) std::bit_cast<T>(x)
-#else
 #define bit_cast(T, x) __builtin_bit_cast(T, x)
-#endif
 
 #define CASE(N, FN, ...) case N: return FN(__VA_ARGS__, N);
 

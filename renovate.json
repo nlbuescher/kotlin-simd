@@ -1,0 +1,38 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": [
+        "config:recommended"
+    ],
+    "enabledManagers": [
+        "gradle",
+        "gradle-wrapper",
+        "github-actions"
+    ],
+    "schedule": [
+        "before 6am on monday"
+    ],
+    "automerge": false,
+    "automergeType": "pr",
+    "platformAutomerge": true,
+    "packageRules": [
+        {
+            "description": "Patch and minor updates may auto-merge after required CI checks pass.",
+            "matchUpdateTypes": [
+                "patch",
+                "minor"
+            ],
+            "automerge": true
+        },
+        {
+            "description": "Kotlin minor and major updates require manual compatibility and release review.",
+            "matchPackageNames": [
+                "/^org\\.jetbrains\\.kotlin(?:[.:]|$)/"
+            ],
+            "matchUpdateTypes": [
+                "minor",
+                "major"
+            ],
+            "automerge": false
+        }
+    ]
+}

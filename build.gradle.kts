@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "dev.buescher"
-version = "1.3.0-SNAPSHOT"
+version = "2.0.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -47,7 +47,19 @@ fun registerBuildSimdTaskForTarget(konanTarget: KonanTarget): TaskProvider<Exec>
         inputs.file(sourceFile)
         outputs.file(objectFile)
 
-        commandLine(platform.clang.clangCXX("-std=c++26", "-O3", "-fPIC", "-c", "-o", "$objectFile", "$sourceFile"))
+        val compilerArgs = buildList {
+            addAll(listOf("-std=c++20", "-O3"))
+            if (konanTarget.family != Family.MINGW) {
+                add("-fPIC")
+            }
+            if (konanTarget.family == Family.OSX) {
+                // simd.cpp uses C headers and compiler builtins. Avoid libc++'s
+                // C header wrappers, which require a newer Clang than Kotlin 2.0's.
+                add("-nostdinc++")
+            }
+            addAll(listOf("-c", "-o", "$objectFile", "$sourceFile"))
+        }
+        commandLine(platform.clang.clangCXX(*compilerArgs.toTypedArray()))
     }
 
     val archiveSimd = tasks.register<Exec>("archiveSimd$presetSuffix") {
