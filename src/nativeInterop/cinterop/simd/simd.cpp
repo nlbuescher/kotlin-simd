@@ -43,11 +43,10 @@ extern "C" const bool
 
 //region === UTILS ===
 
-#define TARGET(x) [[gnu::target(x)]]
-
+#define bit_cast(T, x) __builtin_bit_cast(T, x)
 #define unreachable() __builtin_unreachable()
 
-#define bit_cast(T, x) __builtin_bit_cast(T, x)
+#define TARGET(x) [[gnu::target(x)]]
 
 #define CASE(N, FN, ...) case N: return FN(__VA_ARGS__, N);
 
