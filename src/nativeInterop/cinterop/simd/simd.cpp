@@ -43,8 +43,19 @@ extern "C" const bool
 
 //region === UTILS ===
 
+#ifdef __cpp_lib_bit_cast
+#include <bit>
+#define bit_cast(T, x) std::bit_cast<T>(x)
+#else
 #define bit_cast(T, x) __builtin_bit_cast(T, x)
+#endif
+
+#ifdef __cpp_lib_unreachable
+#include <utility>
+#define unreachable() std::unreachable()
+#else
 #define unreachable() __builtin_unreachable()
+#endif
 
 #define TARGET(x) [[gnu::target(x)]]
 
