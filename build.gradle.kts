@@ -47,7 +47,7 @@ fun registerBuildSimdTaskForTarget(konanTarget: KonanTarget): TaskProvider<Exec>
         inputs.file(sourceFile)
         outputs.file(objectFile)
 
-        commandLine(platform.clang.clangCXX("-std=c++20", "-O3", "-fPIC", "-c", "-o", "$objectFile", "$sourceFile"))
+        commandLine(platform.clang.clangCXX("-std=c++26", "-O3", "-fPIC", "-c", "-o", "$objectFile", "$sourceFile"))
     }
 
     val archiveSimd = tasks.register<Exec>("archiveSimd$presetSuffix") {
