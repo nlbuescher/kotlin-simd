@@ -3,7 +3,7 @@
 [![Maven Central Version](https://img.shields.io/maven-central/v/dev.buescher/kotlin-simd?logo=apachemaven)](https://central.sonatype.com/search?namespace=dev.buescher&name=kotlin-simd)
 [![Build](https://github.com/nlbuescher/kotlin-simd/actions/workflows/build.yaml/badge.svg)](https://github.com/nlbuescher/kotlin-simd/actions/workflows/build.yaml)
 
-Exposes SSE, SSE2, SSE3, SSSE3, SSE4.1, and SSE4.2 compiler intrincs to Kotlin/Native as functions.
+Exposes SSE, SSE2, SSE3, SSSE3, SSE4.1, and SSE4.2 compiler intrinsics to Kotlin/Native as functions.
 
 SSE Support can be checked by using the boolean constants defined by the library (simply called SSE, SSE2, etc). This
 allows changing implementation at runtime based on hardware SSE support:
@@ -41,3 +41,6 @@ Moving between major/minor release lines is considered a breaking change and
 may require upgrading your Kotlin compiler. Cross-version compatibility of the
 published cinterop KLIBs is not guaranteed. This is Kotlin-aligned versioning,
 not strict SemVer.
+
+Version compatibility is based on the Kotlin
+documentation: https://kotlinlang.org/docs/multiplatform/multiplatform-compatibility-guide.html#version-compatibility
