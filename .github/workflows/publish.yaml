@@ -1,0 +1,61 @@
+name: Publish
+
+on:
+  push:
+    tags: [ v* ]
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  publish:
+    name: Publish release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Find successful main build for this commit
+        id: main-build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          RUN_ID=$(gh run list \
+            --workflow build.yaml \
+            --branch main \
+            --commit "$GITHUB_SHA" \
+            --status success \
+            --json databaseId,status,conclusion \
+            --jq '[.[] | select(.status == "completed" and .conclusion == "success")][0].databaseId // empty')
+          if [[ -z "$RUN_ID" ]]; then
+            echo "No completed, successful main build found for commit $GITHUB_SHA; wait for the main build to finish before creating the tag." >&2
+            exit 1
+          fi
+          echo "run-id=$RUN_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v7
+        with:
+          pattern: staging-deploy-*
+          run-id: ${{ steps.main-build.outputs.run-id }}
+          github-token: ${{ github.token }}
+          path: build/staging-deploy
+          merge-multiple: true
+
+      - name: Deploy artifacts
+        run: ./gradlew jreleaserDeploy --stacktrace
+        env:
+          JRELEASER_MAVENCENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          JRELEASER_MAVENCENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
+          JRELEASER_NEXUS2_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          JRELEASER_NEXUS2_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
+          JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
+          JRELEASER_GPG_SECRET_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
