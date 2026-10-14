@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "dev.buescher"
-version = "2.4.0"
+version = "2.5.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
