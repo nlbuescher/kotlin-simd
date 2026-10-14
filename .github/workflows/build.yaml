@@ -23,7 +23,7 @@ jobs:
           - target: linuxX64
             os: ubuntu-latest
           - target: macosX64
-            os: macos-15-intel
+            os: macos-26-intel
           - target: mingwX64
             os: windows-latest
     runs-on: ${{ matrix.os }}
@@ -31,10 +31,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Select Xcode 26.0
+      - name: Select Xcode 26.4
         if: runner.os == 'macOS'
         run: |
-          sudo xcode-select --switch /Applications/Xcode_26.0.app/Contents/Developer
+          sudo xcode-select --switch /Applications/Xcode_26.4.app/Contents/Developer
           xcodebuild -version
 
       - name: Set up java
